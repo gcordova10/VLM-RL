@@ -10,18 +10,23 @@ def extract_tb(path):
     data = {}
     for tag in ea.Tags()['scalars']:
         scalars = ea.Scalars(tag)
+        # Forzamos nombres únicos desde la extracción
         data[tag] = pd.DataFrame([{'step': e.step, 'val': e.value} for e in scalars]).groupby('step')['val'].mean()
     return pd.DataFrame(data)
 
 path_base = "/media/nemesis/disco4tb/Documents/VLM-RL/tensorboard/CLIPRewardedSAC_20250930_154046_idvlm_rl/events.out.tfevents.1759239646.nemesis.48840.0"
 path_ours = "/media/nemesis/disco4tb/Documents_VLM-RL/investigacion/VLM-RL-PRIVATE/tensorboard/CLIPRewardedSAC_20260212_082504_idvlm_rl/events.out.tfevents.1770881104.nemesis.3270074.0"
 
-print("Extrayendo binarios con soporte para métricas exclusivas...")
+print("Extrayendo binarios y unificando claves...")
 df_base = extract_tb(path_base)
 df_ours = extract_tb(path_ours)
 
-# Unir manteniendo NaNs para detectar métricas faltantes
-df = df_ours.join(df_base, lsuffix='_ours', rsuffix='_base', how='outer').sort_index().interpolate(method='linear')
+# Forzamos sufijos manualmente para evitar que el join los omita si no hay colisión
+df_base.columns = [c + '_base' for c in df_base.columns]
+df_ours.columns = [c + '_ours' for c in df_ours.columns]
+
+# Unir todo por pasos de entrenamiento
+df = df_ours.join(df_base, how='outer').sort_index().interpolate(method='linear')
 df.reset_index(inplace=True)
 
 filters = [
@@ -52,7 +57,7 @@ html_content = f"""
 <!DOCTYPE html>
 <html>
 <head>
-    <title>VLM-RL Dynamic Audit</title>
+    <title>VLM-RL Dual Audit Dashboard</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -68,7 +73,7 @@ html_content = f"""
     </style>
 </head>
 <body>
-    <h1 class="text-center mb-5">🕵️ VLM-RL Advanced Audit</h1>
+    <h1 class="text-center mb-5">🕵️ VLM-RL Dual Audit</h1>
     <div class="container-fluid">
         <div class="row" id="plots-grid"></div>
     </div>
@@ -79,6 +84,15 @@ html_content = f"""
         const plotsGrid = document.getElementById('plots-grid');
 
         filterConfigs.forEach((conf, idx) => {{
+            const keyOurs = conf.metric + '_ours';
+            const keyBase = conf.metric + '_base';
+            
+            // Verificar si hay datos reales para cada uno
+            const hasOurs = data.some(d => d[keyOurs] !== null);
+            const hasBase = data.some(d => d[keyBase] !== null);
+
+            if (!hasOurs && !hasBase) return; // Saltamos si no hay nada
+
             const col = document.createElement('div');
             col.className = 'col-xl-6 col-lg-12';
             col.innerHTML = `
@@ -89,7 +103,7 @@ html_content = f"""
                             <div class="d-flex align-items-center gap-3">
                                 <div class="legend-box">
                                     <span style="display:inline-block; width:10px; height:10px; background:rgba(249,115,22,0.3); border:1px solid #f97316"></span> Ours
-                                    <span class="ms-2" style="display:inline-block; width:10px; height:10px; background:rgba(255,255,255,0.15); border:1px solid #fff"></span> Base
+                                    ${{hasBase ? '<span class="ms-2" style="display:inline-block; width:10px; height:10px; background:rgba(255,255,255,0.15); border:1px solid #fff"></span> Base' : ''}}
                                 </div>
                                 <input type="number" id="input-${{idx}}" class="badge-val" style="width: 100px;" step="any">
                             </div>
@@ -100,30 +114,10 @@ html_content = f"""
                 </div>
             `;
             plotsGrid.appendChild(col);
-            renderPlot(idx, conf);
-        }});
 
-        function renderPlot(idx, conf) {{
-            const keyOurs = conf.metric + '_ours';
-            const keyBase = conf.metric + '_base';
-            
             const traces = [];
-            // Solo añadir traza si hay datos reales (no nulos)
-            const hasOurs = data.some(d => d[keyOurs] !== null);
-            const hasBase = data.some(d => d[keyBase] !== null);
-
-            if(hasOurs) {{
-                traces.push({{
-                    x: data.map(d => d.step), y: data.map(d => d[keyOurs]),
-                    name: 'Ours', type: 'scatter', line: {{color: '#f97316', width: 2.5}}
-                }});
-            }}
-            if(hasBase) {{
-                traces.push({{
-                    x: data.map(d => d.step), y: data.map(d => d[keyBase]),
-                    name: 'Baseline', type: 'scatter', line: {{color: '#000000', width: 2}}
-                }});
-            }}
+            if(hasOurs) traces.push({{ x: data.map(d => d.step), y: data.map(d => d[keyOurs]), name: 'Ours', type: 'scatter', line: {{color: '#f97316', width: 2.5}} }});
+            if(hasBase) traces.push({{ x: data.map(d => d.step), y: data.map(d => d[keyBase]), name: 'Baseline', type: 'scatter', line: {{color: '#000000', width: 2}} }});
 
             const layout = {{
                 paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(255,255,255,0.05)',
@@ -139,14 +133,10 @@ html_content = f"""
             const slider = document.getElementById(`slider-${{idx}}`);
             const input = document.getElementById(`input-${{idx}}`);
             
-            // Calcular limites reales basados en los datos presentes
             const allVals = data.map(d => d[keyOurs]).concat(data.map(d => d[keyBase])).filter(v => v !== null);
             const min = Math.min(...allVals);
             const max = Math.max(...allVals);
-            
-            slider.min = min; slider.max = max; 
-            slider.value = conf.val;
-            input.value = conf.val;
+            slider.min = min; slider.max = max; slider.value = conf.val; input.value = conf.val;
 
             const update = (source) => {{
                 let thresh = source === 'slider' ? parseFloat(slider.value) : parseFloat(input.value);
@@ -197,7 +187,7 @@ html_content = f"""
             slider.oninput = () => update('slider');
             input.onchange = () => update('input');
             update('slider');
-        }}
+        }});
     </script>
 </body>
 </html>
@@ -206,4 +196,4 @@ html_content = f"""
 output_path = "/media/nemesis/disco4tb/Documents/VLM-RL/tensorboard_analysis/comparison_dashboard_nuevo.html"
 with open(output_path, "w") as f:
     f.write(html_content)
-print("✅ Dashboard regenerado con soporte robusto para métricas de suavidad.")
+print("✅ Dashboard corregido: Cargando métricas de suavidad exclusivas.")
