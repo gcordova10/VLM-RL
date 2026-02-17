@@ -30,24 +30,24 @@ df = df_ours.join(df_base, how='outer').sort_index().interpolate(method='linear'
 df.reset_index(inplace=True)
 
 filters = [
-    {"metric": "custom/CPM", "op": "<", "val": 10},
-    {"metric": "custom/CPS", "op": "<", "val": 0.01},
-    {"metric": "custom/avg_center_dev", "op": "<", "val": 0.2},
+    {"metric": "custom/CPM", "op": "<", "val": 8},
+    {"metric": "custom/CPS", "op": "<", "val": 0.005},
+    {"metric": "custom/avg_center_dev", "op": "<", "val": 0.1},
     {"metric": "custom/avg_speed", "op": ">", "val": 15},
-    {"metric": "custom/collision_interval", "op": ">", "val": 12000},
-    {"metric": "custom/collision_num", "op": "<", "val": 5},
-    {"metric": "custom/collision_rate", "op": "<", "val": 0.5},
+    {"metric": "custom/collision_interval", "op": ">", "val": 5000},
+    {"metric": "custom/collision_num", "op": "<", "val": 230},
+    {"metric": "custom/collision_rate", "op": "<", "val": 0.8},
     {"metric": "custom/collision_speed", "op": "<", "val": 4},
-    {"metric": "custom/episode_length", "op": ">", "val": 5000},
+    {"metric": "custom/episode_length", "op": ">", "val": 3000},
     {"metric": "custom/mean_reward", "op": ">", "val": 0.5},
-    {"metric": "custom/routes_completed", "op": ">", "val": 5},
+    {"metric": "custom/routes_completed", "op": ">", "val": 4},
     {"metric": "custom/total_distance", "op": ">", "val": 2000},
     {"metric": "custom/mean_steer_smoothness_x100", "op": "<", "val": 15},
     {"metric": "custom/total_reward", "op": ">", "val": 2000},
     {"metric": "replay_buffer/mean_recent_rewards", "op": ">", "val": 0.5},
     {"metric": "replay_buffer/sum_recent_rewards", "op": ">", "val": 200},
     {"metric": "replay_buffer/mean_recent_steer_smoothness_x100", "op": "<", "val": 8},
-    {"metric": "rollout/ep_len_mean", "op": ">", "val": 4000},
+    {"metric": "rollout/ep_len_mean", "op": ">", "val": 3000},
     {"metric": "rollout/ep_gt_rew_mean", "op": ">", "val": 100}
 ]
 
