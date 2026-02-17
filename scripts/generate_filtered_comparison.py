@@ -16,11 +16,12 @@ def extract_tb(path):
 path_base = "/media/nemesis/disco4tb/Documents/VLM-RL/tensorboard/CLIPRewardedSAC_20250930_154046_idvlm_rl/events.out.tfevents.1759239646.nemesis.48840.0"
 path_ours = "/media/nemesis/disco4tb/Documents_VLM-RL/investigacion/VLM-RL-PRIVATE/tensorboard/CLIPRewardedSAC_20260212_082504_idvlm_rl/events.out.tfevents.1770881104.nemesis.3270074.0"
 
-print("Extraendo y restaurando binarios...")
+print("Extrayendo binarios con soporte para métricas exclusivas...")
 df_base = extract_tb(path_base)
 df_ours = extract_tb(path_ours)
 
-df = df_ours.join(df_base, lsuffix='_ours', rsuffix='_base', how='outer').sort_index().interpolate(method='linear').fillna(0)
+# Unir manteniendo NaNs para detectar métricas faltantes
+df = df_ours.join(df_base, lsuffix='_ours', rsuffix='_base', how='outer').sort_index().interpolate(method='linear')
 df.reset_index(inplace=True)
 
 filters = [
@@ -51,7 +52,7 @@ html_content = f"""
 <!DOCTYPE html>
 <html>
 <head>
-    <title>VLM-RL Professional Auditor</title>
+    <title>VLM-RL Dynamic Audit</title>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -67,7 +68,7 @@ html_content = f"""
     </style>
 </head>
 <body>
-    <h1 class="text-center mb-5">🕵️ VLM-RL Audit: Ours vs Baseline</h1>
+    <h1 class="text-center mb-5">🕵️ VLM-RL Advanced Audit</h1>
     <div class="container-fluid">
         <div class="row" id="plots-grid"></div>
     </div>
@@ -106,14 +107,23 @@ html_content = f"""
             const keyOurs = conf.metric + '_ours';
             const keyBase = conf.metric + '_base';
             
-            const traceOurs = {{
-                x: data.map(d => d.step), y: data.map(d => d[keyOurs] || 0),
-                name: 'Ours', type: 'scatter', line: {{color: '#f97316', width: 2.5}}
-            }};
-            const traceBase = {{
-                x: data.map(d => d.step), y: data.map(d => d[keyBase] || 0),
-                name: 'Baseline', type: 'scatter', line: {{color: '#000000', width: 2}}
-            }};
+            const traces = [];
+            // Solo añadir traza si hay datos reales (no nulos)
+            const hasOurs = data.some(d => d[keyOurs] !== null);
+            const hasBase = data.some(d => d[keyBase] !== null);
+
+            if(hasOurs) {{
+                traces.push({{
+                    x: data.map(d => d.step), y: data.map(d => d[keyOurs]),
+                    name: 'Ours', type: 'scatter', line: {{color: '#f97316', width: 2.5}}
+                }});
+            }}
+            if(hasBase) {{
+                traces.push({{
+                    x: data.map(d => d.step), y: data.map(d => d[keyBase]),
+                    name: 'Baseline', type: 'scatter', line: {{color: '#000000', width: 2}}
+                }});
+            }}
 
             const layout = {{
                 paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(255,255,255,0.05)',
@@ -124,14 +134,19 @@ html_content = f"""
                 shapes: []
             }};
 
-            Plotly.newPlot(`plot-${{idx}}`, [traceOurs, traceBase], layout);
+            Plotly.newPlot(`plot-${{idx}}`, traces, layout);
 
             const slider = document.getElementById(`slider-${{idx}}`);
             const input = document.getElementById(`input-${{idx}}`);
-            const yAll = data.map(d => d[keyOurs] || 0).concat(data.map(d => d[keyBase] || 0));
-            const min = Math.min(...yAll);
-            const max = Math.max(...yAll);
-            slider.min = min; slider.max = max; slider.value = conf.val; input.value = conf.val;
+            
+            // Calcular limites reales basados en los datos presentes
+            const allVals = data.map(d => d[keyOurs]).concat(data.map(d => d[keyBase])).filter(v => v !== null);
+            const min = Math.min(...allVals);
+            const max = Math.max(...allVals);
+            
+            slider.min = min; slider.max = max; 
+            slider.value = conf.val;
+            input.value = conf.val;
 
             const update = (source) => {{
                 let thresh = source === 'slider' ? parseFloat(slider.value) : parseFloat(input.value);
@@ -146,7 +161,8 @@ html_content = f"""
                 const generateBoundedRects = (key, color) => {{
                     let start = null;
                     for (let i = 0; i < data.length; i++) {{
-                        const val = data[i][key] || 0;
+                        const val = data[i][key];
+                        if (val === null) continue;
                         const condition = conf.op === '<' ? val < thresh : val > thresh;
                         if (condition) {{
                             if (start === null) start = data[i].step;
@@ -172,8 +188,8 @@ html_content = f"""
                     }}
                 }};
 
-                generateBoundedRects(keyOurs, 'rgba(249, 115, 22, 0.25)');
-                generateBoundedRects(keyBase, 'rgba(255, 255, 255, 0.15)');
+                if(hasOurs) generateBoundedRects(keyOurs, 'rgba(249, 115, 22, 0.25)');
+                if(hasBase) generateBoundedRects(keyBase, 'rgba(255, 255, 255, 0.15)');
 
                 Plotly.relayout(`plot-${{idx}}`, {{shapes: shapes}});
             }};
@@ -190,4 +206,4 @@ html_content = f"""
 output_path = "/media/nemesis/disco4tb/Documents/VLM-RL/tensorboard_analysis/comparison_dashboard_nuevo.html"
 with open(output_path, "w") as f:
     f.write(html_content)
-print(f"✅ Dashboard Restaurado Completamente con todas las funciones.")
+print("✅ Dashboard regenerado con soporte robusto para métricas de suavidad.")
