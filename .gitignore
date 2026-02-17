@@ -1,0 +1,18 @@
+
+# Ignorar carpetas de caché de Python
+__pycache__/
+
+paper
+tensorboard/
+.vscode
+
+*.txt
+
+extract_*.py
+
+
+tools
+2412.15544v1.pdf
+
+carla_env.yml
+eval_all.py

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"><title>Robustness 20251027</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body { background-color: #0f172a; color: #e2e8f0; font-family: 'Inter', sans-serif; padding: 40px; }
+        .chart-container { background: #1e293b; border-radius: 20px; padding: 25px; margin-bottom: 40px; border: 1px solid #334155; }
+        .card-scen { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 15px; margin-bottom: 20px; font-size: 0.8rem; }
+        .highlight-row { background: rgba(251, 191, 36, 0.1); color: #fbbf24; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1 class="text-center fw-bold text-warning mb-5">🏆 Robustness Analysis (20251027)</h1>
+    <div class="chart-container" style="border:1px solid #fbbf24"><div id="chart-Global" style="height:400px;"></div></div>
+    <div class="row">
+        <div class="col-4"><div class="chart-container"><h5 class="text-center">Empty</h5><div id="chart-Empty" style="height:250px;"></div></div></div>
+        <div class="col-4"><div class="chart-container"><h5 class="text-center">Regular</h5><div id="chart-Regular" style="height:250px;"></div></div></div>
+        <div class="col-4"><div class="chart-container"><h5 class="text-center">Dense</h5><div id="chart-Dense" style="height:250px;"></div></div></div>
+    </div>
+    <h2 class="text-warning mt-5">🏙️ Town Specialists</h2>
+    <div class="row mb-5">
+        <div class="col" style="width:20%"><div class="chart-container"><h6>Town01</h6><div id="chart-Town01" style="height:180px;"></div></div></div><div class="col" style="width:20%"><div class="chart-container"><h6>Town02</h6><div id="chart-Town02" style="height:180px;"></div></div></div><div class="col" style="width:20%"><div class="chart-container"><h6>Town03</h6><div id="chart-Town03" style="height:180px;"></div></div></div><div class="col" style="width:20%"><div class="chart-container"><h6>Town04</h6><div id="chart-Town04" style="height:180px;"></div></div></div><div class="col" style="width:20%"><div class="chart-container"><h6>Town05</h6><div id="chart-Town05" style="height:180px;"></div></div></div>
+    </div>
+    <h2 class="text-warning mt-5">📂 Desglose por Escenario</h2>
+    <div class="row">
+        
+        <div class="col-xl-3 col-lg-4 col-md-6">
+            <div class="card-scen shadow-sm">
+                <div class="fw-bold text-info mb-2">Town01</div>
+                <table style="width:100%"><tbody>
+                    <tr class="highlight-row"><td>#1</td><td>800000</td><td>100.0%</td></tr><tr class="highlight-row"><td>#2</td><td>700000</td><td>98.7%</td></tr><tr class="highlight-row"><td>#3</td><td>900000</td><td>97.4%</td></tr><tr class=""><td>#4</td><td>970000</td><td>94.5%</td></tr><tr class=""><td>#5</td><td>930000</td><td>94.4%</td></tr><tr class=""><td>#6</td><td>860000</td><td>94.3%</td></tr><tr class=""><td>#7</td><td>740000</td><td>94.3%</td></tr><tr class=""><td>#8</td><td>990000</td><td>94.2%</td></tr><tr class=""><td>#9</td><td>440000</td><td>94.1%</td></tr><tr class=""><td>#10</td><td>780000</td><td>94.0%</td></tr>
+                </tbody></table>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-lg-4 col-md-6">
+            <div class="card-scen shadow-sm">
+                <div class="fw-bold text-info mb-2">Town02</div>
+                <table style="width:100%"><tbody>
+                    <tr class="highlight-row"><td>#1</td><td>840000</td><td>99.7%</td></tr><tr class="highlight-row"><td>#2</td><td>440000</td><td>98.6%</td></tr><tr class="highlight-row"><td>#3</td><td>660000</td><td>98.3%</td></tr><tr class=""><td>#4</td><td>450000</td><td>97.9%</td></tr><tr class=""><td>#5</td><td>910000</td><td>97.2%</td></tr><tr class=""><td>#6</td><td>980000</td><td>96.6%</td></tr><tr class=""><td>#7</td><td>570000</td><td>96.2%</td></tr><tr class=""><td>#8</td><td>560000</td><td>96.1%</td></tr><tr class=""><td>#9</td><td>880000</td><td>95.9%</td></tr><tr class=""><td>#10</td><td>670000</td><td>95.7%</td></tr>
+                </tbody></table>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-lg-4 col-md-6">
+            <div class="card-scen shadow-sm">
+                <div class="fw-bold text-info mb-2">Town03</div>
+                <table style="width:100%"><tbody>
+                    <tr class="highlight-row"><td>#1</td><td>240000</td><td>98.5%</td></tr><tr class="highlight-row"><td>#2</td><td>800000</td><td>98.1%</td></tr><tr class="highlight-row"><td>#3</td><td>960000</td><td>97.1%</td></tr><tr class=""><td>#4</td><td>500000</td><td>96.9%</td></tr><tr class=""><td>#5</td><td>700000</td><td>95.5%</td></tr><tr class=""><td>#6</td><td>110000</td><td>95.0%</td></tr><tr class=""><td>#7</td><td>780000</td><td>93.4%</td></tr><tr class=""><td>#8</td><td>730000</td><td>92.6%</td></tr><tr class=""><td>#9</td><td>690000</td><td>92.5%</td></tr><tr class=""><td>#10</td><td>100000</td><td>92.2%</td></tr>
+                </tbody></table>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-lg-4 col-md-6">
+            <div class="card-scen shadow-sm">
+                <div class="fw-bold text-info mb-2">Town04</div>
+                <table style="width:100%"><tbody>
+                    <tr class="highlight-row"><td>#1</td><td>900000</td><td>98.6%</td></tr><tr class="highlight-row"><td>#2</td><td>1000000</td><td>98.6%</td></tr><tr class="highlight-row"><td>#3</td><td>390000</td><td>98.3%</td></tr><tr class=""><td>#4</td><td>800000</td><td>98.2%</td></tr><tr class=""><td>#5</td><td>420000</td><td>98.2%</td></tr><tr class=""><td>#6</td><td>450000</td><td>97.5%</td></tr><tr class=""><td>#7</td><td>320000</td><td>96.9%</td></tr><tr class=""><td>#8</td><td>960000</td><td>96.9%</td></tr><tr class=""><td>#9</td><td>910000</td><td>96.8%</td></tr><tr class=""><td>#10</td><td>890000</td><td>96.8%</td></tr>
+                </tbody></table>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-lg-4 col-md-6">
+            <div class="card-scen shadow-sm">
+                <div class="fw-bold text-info mb-2">Town05</div>
+                <table style="width:100%"><tbody>
+                    <tr class="highlight-row"><td>#1</td><td>450000</td><td>98.2%</td></tr><tr class="highlight-row"><td>#2</td><td>220000</td><td>97.6%</td></tr><tr class="highlight-row"><td>#3</td><td>160000</td><td>97.3%</td></tr><tr class=""><td>#4</td><td>640000</td><td>95.3%</td></tr><tr class=""><td>#5</td><td>50000</td><td>92.8%</td></tr><tr class=""><td>#6</td><td>90000</td><td>90.9%</td></tr><tr class=""><td>#7</td><td>530000</td><td>90.8%</td></tr><tr class=""><td>#8</td><td>360000</td><td>90.6%</td></tr><tr class=""><td>#9</td><td>410000</td><td>90.6%</td></tr><tr class=""><td>#10</td><td>200000</td><td>90.5%</td></tr>
+                </tbody></table>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-lg-4 col-md-6">
+            <div class="card-scen shadow-sm">
+                <div class="fw-bold text-info mb-2">denseTown01</div>
+                <table style="width:100%"><tbody>
+                    <tr class="highlight-row"><td>#1</td><td>700000</td><td>96.3%</td></tr><tr class="highlight-row"><td>#2</td><td>470000</td><td>93.5%</td></tr><tr class="highlight-row"><td>#3</td><td>680000</td><td>93.4%</td></tr><tr class=""><td>#4</td><td>180000</td><td>92.3%</td></tr><tr class=""><td>#5</td><td>710000</td><td>92.0%</td></tr><tr class=""><td>#6</td><td>830000</td><td>91.6%</td></tr><tr class=""><td>#7</td><td>480000</td><td>91.0%</td></tr><tr class=""><td>#8</td><td>760000</td><td>90.5%</td></tr><tr class=""><td>#9</td><td>360000</td><td>89.4%</td></tr><tr class=""><td>#10</td><td>650000</td><td>88.8%</td></tr>
+                </tbody></table>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-lg-4 col-md-6">
+            <div class="card-scen shadow-sm">
+                <div class="fw-bold text-info mb-2">denseTown02</div>
+                <table style="width:100%"><tbody>
+                    <tr class="highlight-row"><td>#1</td><td>180000</td><td>93.1%</td></tr><tr class="highlight-row"><td>#2</td><td>900000</td><td>92.5%</td></tr><tr class="highlight-row"><td>#3</td><td>680000</td><td>92.4%</td></tr><tr class=""><td>#4</td><td>690000</td><td>92.2%</td></tr><tr class=""><td>#5</td><td>320000</td><td>91.5%</td></tr><tr class=""><td>#6</td><td>700000</td><td>89.4%</td></tr><tr class=""><td>#7</td><td>440000</td><td>89.4%</td></tr><tr class=""><td>#8</td><td>510000</td><td>88.9%</td></tr><tr class=""><td>#9</td><td>670000</td><td>88.2%</td></tr><tr class=""><td>#10</td><td>230000</td><td>88.1%</td></tr>
+                </tbody></table>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-lg-4 col-md-6">
+            <div class="card-scen shadow-sm">
+                <div class="fw-bold text-info mb-2">denseTown03</div>
+                <table style="width:100%"><tbody>
+                    <tr class="highlight-row"><td>#1</td><td>990000</td><td>96.9%</td></tr><tr class="highlight-row"><td>#2</td><td>800000</td><td>95.8%</td></tr><tr class="highlight-row"><td>#3</td><td>470000</td><td>93.5%</td></tr><tr class=""><td>#4</td><td>300000</td><td>93.3%</td></tr><tr class=""><td>#5</td><td>380000</td><td>93.0%</td></tr><tr class=""><td>#6</td><td>700000</td><td>92.5%</td></tr><tr class=""><td>#7</td><td>610000</td><td>92.4%</td></tr><tr class=""><td>#8</td><td>580000</td><td>92.3%</td></tr><tr class=""><td>#9</td><td>500000</td><td>92.0%</td></tr><tr class=""><td>#10</td><td>320000</td><td>91.9%</td></tr>
+                </tbody></table>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-lg-4 col-md-6">
+            <div class="card-scen shadow-sm">
+                <div class="fw-bold text-info mb-2">denseTown04</div>
+                <table style="width:100%"><tbody>
+                    <tr class="highlight-row"><td>#1</td><td>900000</td><td>98.7%</td></tr><tr class="highlight-row"><td>#2</td><td>800000</td><td>98.5%</td></tr><tr class="highlight-row"><td>#3</td><td>330000</td><td>98.4%</td></tr><tr class=""><td>#4</td><td>480000</td><td>98.2%</td></tr><tr class=""><td>#5</td><td>430000</td><td>98.2%</td></tr><tr class=""><td>#6</td><td>460000</td><td>98.0%</td></tr><tr class=""><td>#7</td><td>990000</td><td>97.8%</td></tr><tr class=""><td>#8</td><td>950000</td><td>97.4%</td></tr><tr class=""><td>#9</td><td>940000</td><td>97.3%</td></tr><tr class=""><td>#10</td><td>980000</td><td>97.1%</td></tr>
+                </tbody></table>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-lg-4 col-md-6">
+            <div class="card-scen shadow-sm">
+                <div class="fw-bold text-info mb-2">denseTown05</div>
+                <table style="width:100%"><tbody>
+                    <tr class="highlight-row"><td>#1</td><td>1000000</td><td>99.7%</td></tr><tr class="highlight-row"><td>#2</td><td>740000</td><td>98.3%</td></tr><tr class="highlight-row"><td>#3</td><td>530000</td><td>97.8%</td></tr><tr class=""><td>#4</td><td>110000</td><td>95.7%</td></tr><tr class=""><td>#5</td><td>660000</td><td>95.4%</td></tr><tr class=""><td>#6</td><td>600000</td><td>95.0%</td></tr><tr class=""><td>#7</td><td>420000</td><td>94.7%</td></tr><tr class=""><td>#8</td><td>240000</td><td>94.6%</td></tr><tr class=""><td>#9</td><td>170000</td><td>94.1%</td></tr><tr class=""><td>#10</td><td>210000</td><td>93.9%</td></tr>
+                </tbody></table>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-lg-4 col-md-6">
+            <div class="card-scen shadow-sm">
+                <div class="fw-bold text-info mb-2">emptyTown01</div>
+                <table style="width:100%"><tbody>
+                    <tr class="highlight-row"><td>#1</td><td>1000000</td><td>100.0%</td></tr><tr class="highlight-row"><td>#2</td><td>900000</td><td>99.8%</td></tr><tr class="highlight-row"><td>#3</td><td>800000</td><td>99.2%</td></tr><tr class=""><td>#4</td><td>700000</td><td>98.8%</td></tr><tr class=""><td>#5</td><td>980000</td><td>94.0%</td></tr><tr class=""><td>#6</td><td>990000</td><td>94.0%</td></tr><tr class=""><td>#7</td><td>950000</td><td>94.0%</td></tr><tr class=""><td>#8</td><td>890000</td><td>94.0%</td></tr><tr class=""><td>#9</td><td>880000</td><td>93.9%</td></tr><tr class=""><td>#10</td><td>910000</td><td>93.9%</td></tr>
+                </tbody></table>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-lg-4 col-md-6">
+            <div class="card-scen shadow-sm">
+                <div class="fw-bold text-info mb-2">emptyTown02</div>
+                <table style="width:100%"><tbody>
+                    <tr class="highlight-row"><td>#1</td><td>900000</td><td>99.8%</td></tr><tr class="highlight-row"><td>#2</td><td>800000</td><td>99.3%</td></tr><tr class="highlight-row"><td>#3</td><td>700000</td><td>97.2%</td></tr><tr class=""><td>#4</td><td>1000000</td><td>96.5%</td></tr><tr class=""><td>#5</td><td>990000</td><td>96.3%</td></tr><tr class=""><td>#6</td><td>920000</td><td>96.1%</td></tr><tr class=""><td>#7</td><td>980000</td><td>96.1%</td></tr><tr class=""><td>#8</td><td>890000</td><td>96.1%</td></tr><tr class=""><td>#9</td><td>880000</td><td>96.1%</td></tr><tr class=""><td>#10</td><td>970000</td><td>96.0%</td></tr>
+                </tbody></table>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-lg-4 col-md-6">
+            <div class="card-scen shadow-sm">
+                <div class="fw-bold text-info mb-2">emptyTown03</div>
+                <table style="width:100%"><tbody>
+                    <tr class="highlight-row"><td>#1</td><td>1000000</td><td>100.0%</td></tr><tr class="highlight-row"><td>#2</td><td>320000</td><td>97.8%</td></tr><tr class="highlight-row"><td>#3</td><td>260000</td><td>97.3%</td></tr><tr class=""><td>#4</td><td>990000</td><td>97.0%</td></tr><tr class=""><td>#5</td><td>970000</td><td>97.0%</td></tr><tr class=""><td>#6</td><td>980000</td><td>96.9%</td></tr><tr class=""><td>#7</td><td>960000</td><td>96.7%</td></tr><tr class=""><td>#8</td><td>940000</td><td>96.3%</td></tr><tr class=""><td>#9</td><td>950000</td><td>96.3%</td></tr><tr class=""><td>#10</td><td>820000</td><td>96.1%</td></tr>
+                </tbody></table>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-lg-4 col-md-6">
+            <div class="card-scen shadow-sm">
+                <div class="fw-bold text-info mb-2">emptyTown04</div>
+                <table style="width:100%"><tbody>
+                    <tr class="highlight-row"><td>#1</td><td>900000</td><td>99.0%</td></tr><tr class="highlight-row"><td>#2</td><td>340000</td><td>98.7%</td></tr><tr class="highlight-row"><td>#3</td><td>800000</td><td>98.6%</td></tr><tr class=""><td>#4</td><td>980000</td><td>97.8%</td></tr><tr class=""><td>#5</td><td>950000</td><td>97.5%</td></tr><tr class=""><td>#6</td><td>920000</td><td>97.4%</td></tr><tr class=""><td>#7</td><td>850000</td><td>97.2%</td></tr><tr class=""><td>#8</td><td>830000</td><td>97.2%</td></tr><tr class=""><td>#9</td><td>840000</td><td>97.2%</td></tr><tr class=""><td>#10</td><td>810000</td><td>97.0%</td></tr>
+                </tbody></table>
+            </div>
+        </div>
+        
+        <div class="col-xl-3 col-lg-4 col-md-6">
+            <div class="card-scen shadow-sm">
+                <div class="fw-bold text-info mb-2">emptyTown05</div>
+                <table style="width:100%"><tbody>
+                    <tr class="highlight-row"><td>#1</td><td>1000000</td><td>99.9%</td></tr><tr class="highlight-row"><td>#2</td><td>930000</td><td>98.8%</td></tr><tr class="highlight-row"><td>#3</td><td>800000</td><td>98.8%</td></tr><tr class=""><td>#4</td><td>870000</td><td>98.6%</td></tr><tr class=""><td>#5</td><td>850000</td><td>98.5%</td></tr><tr class=""><td>#6</td><td>330000</td><td>98.0%</td></tr><tr class=""><td>#7</td><td>410000</td><td>98.0%</td></tr><tr class=""><td>#8</td><td>350000</td><td>98.0%</td></tr><tr class=""><td>#9</td><td>470000</td><td>98.0%</td></tr><tr class=""><td>#10</td><td>370000</td><td>98.0%</td></tr>
+                </tbody></table>
+            </div>
+        </div>
+        
+    </div>
+    <script>
+        const freqs = {"Global": {"labels": ["800000", "900000", "700000", "980000", "1000000", "990000", "320000", "950000", "440000", "450000", "910000", "880000", "890000", "970000", "470000", "960000", "840000", "660000", "670000", "920000", "180000", "680000", "690000", "930000", "740000", "780000", "830000", "480000", "360000", "240000", "500000", "110000", "940000", "420000", "850000", "330000", "530000", "410000", "570000", "560000", "510000", "230000", "860000", "710000", "760000", "650000", "730000", "100000", "260000", "820000", "300000", "380000", "610000", "580000", "390000", "340000", "810000", "430000", "460000", "220000", "160000", "640000", "50000", "90000", "200000", "870000", "350000", "370000", "600000", "170000", "210000"], "values": [9, 7, 7, 6, 6, 6, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}, "Empty": {"labels": ["800000", "1000000", "980000", "900000", "990000", "950000", "700000", "920000", "890000", "880000", "970000", "850000", "910000", "320000", "260000", "960000", "940000", "820000", "340000", "830000", "840000", "810000", "930000", "870000", "330000", "410000", "350000", "470000", "370000"], "values": [4, 4, 4, 3, 3, 3, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}, "Regular": {"labels": ["450000", "800000", "440000", "910000", "700000", "900000", "780000", "960000", "840000", "660000", "980000", "570000", "560000", "880000", "670000", "970000", "930000", "860000", "740000", "990000", "240000", "500000", "110000", "730000", "690000", "100000", "1000000", "390000", "420000", "320000", "890000", "220000", "160000", "640000", "50000", "90000", "530000", "360000", "410000", "200000"], "values": [3, 3, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}, "Dense": {"labels": ["700000", "180000", "900000", "680000", "320000", "470000", "480000", "990000", "800000", "690000", "440000", "510000", "670000", "230000", "710000", "830000", "760000", "360000", "650000", "300000", "380000", "610000", "580000", "500000", "330000", "430000", "460000", "950000", "940000", "980000", "1000000", "740000", "530000", "110000", "660000", "600000", "420000", "240000", "170000", "210000"], "values": [3, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}, "Town01": {"labels": ["700000", "800000", "900000", "990000", "970000", "930000", "860000", "740000", "440000", "780000", "1000000", "980000", "950000", "890000", "880000", "910000", "470000", "680000", "180000", "710000", "830000", "480000", "760000", "360000", "650000"], "values": [3, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}, "Town02": {"labels": ["440000", "980000", "880000", "670000", "900000", "700000", "840000", "660000", "450000", "910000", "570000", "560000", "800000", "1000000", "990000", "920000", "890000", "970000", "180000", "680000", "690000", "320000", "510000", "230000"], "values": [2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}, "Town03": {"labels": ["800000", "960000", "500000", "700000", "320000", "990000", "240000", "110000", "780000", "730000", "690000", "100000", "1000000", "260000", "970000", "980000", "940000", "950000", "820000", "470000", "300000", "380000", "610000", "580000"], "values": [2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}, "Town04": {"labels": ["900000", "800000", "980000", "950000", "1000000", "390000", "420000", "450000", "320000", "960000", "910000", "890000", "340000", "920000", "850000", "830000", "840000", "810000", "330000", "480000", "430000", "460000", "990000", "940000"], "values": [3, 3, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}, "Town05": {"labels": ["530000", "410000", "1000000", "450000", "220000", "160000", "640000", "50000", "90000", "360000", "200000", "930000", "800000", "870000", "850000", "330000", "350000", "470000", "370000", "740000", "110000", "660000", "600000", "420000", "240000", "170000", "210000"], "values": [2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]}};
+        function plot(id, data, color) {
+            Plotly.newPlot(id, [{ x: data.labels, y: data.values, type: 'bar', marker: {color: color} }], { paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)', font: {color: '#fff', size:9}, margin: {t:10,b:50,l:30,r:10}, yaxis: {dtick:1} });
+        }
+        plot('chart-Global', freqs.Global, '#fbbf24');
+        plot('chart-Empty', freqs.Empty, '#3498db');
+        plot('chart-Regular', freqs.Regular, '#2ecc71');
+        plot('chart-Dense', freqs.Dense, '#e74c3c');
+        plot('chart-Town01', freqs['Town01'], '#94a3b8');plot('chart-Town02', freqs['Town02'], '#94a3b8');plot('chart-Town03', freqs['Town03'], '#94a3b8');plot('chart-Town04', freqs['Town04'], '#94a3b8');plot('chart-Town05', freqs['Town05'], '#94a3b8');
+    </script>
+</body>
+</html>

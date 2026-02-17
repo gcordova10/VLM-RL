@@ -91,7 +91,7 @@ class CustomMultiInputExtractor(BaseFeaturesExtractor):
 
 algorithm_params = {
     "PPO": dict(
-        device="cuda:0",
+        device="cuda",
         learning_rate=lr_schedule(1e-4, 1e-6, 2),
         gamma=0.98,
         gae_lambda=0.95,
@@ -106,7 +106,7 @@ algorithm_params = {
                            )
     ),
     "SAC": dict(
-        device="cuda:0",
+        device="cuda",
         learning_rate=lr_schedule(5e-4, 1e-6, 2),
         buffer_size=100000,
         batch_size=256,
@@ -120,7 +120,7 @@ algorithm_params = {
         policy_kwargs=dict(log_std_init=-3, net_arch=[400, 300]),
     ),
     "DDPG": dict(
-        device="cuda:0",
+        device="cuda",
         gamma=0.98,
         buffer_size=200000,
         learning_starts=10000,
@@ -130,7 +130,7 @@ algorithm_params = {
         policy_kwargs=dict(net_arch=[400, 300]),
     ),
     "SAC_CLIP": dict(
-        device="cuda:0",
+        device="cuda",
         learning_rate=lr_schedule(1e-4, 5e-7, 2),
         buffer_size=100000,
         batch_size=256,

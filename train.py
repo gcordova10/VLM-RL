@@ -17,7 +17,7 @@ parser.add_argument("--no_render", action="store_false", help="If True, render t
 parser.add_argument("--fps", type=int, default=15, help="FPS to render the environment")
 parser.add_argument("--num_checkpoints", type=int, default=100, help="Checkpoint number")
 parser.add_argument("--log_dir", type=str, default="tensorboard", help="Directory to save logs")
-parser.add_argument("--device", type=str, default="cuda:0", help="cpu, cuda:0, cuda:1, cuda:2")
+parser.add_argument("--device", type=str, default="cuda", help="cpu, cuda:0, cuda:1, cuda:2")
 parser.add_argument("--config", type=str, default="vlm_rl_ppo", help="Config to use (default: vlm_rl)")
 
 args = vars(parser.parse_args())

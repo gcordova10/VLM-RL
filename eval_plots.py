@@ -6,7 +6,11 @@ import numpy as np
 import argparse
 
 
-def plot_eval(eval_csv_paths, output_name=None):
+def plot_eval(eval_csv_paths, output_name=None, out_dir=None):
+    if not eval_csv_paths or not os.path.exists(eval_csv_paths[0]):
+        print(f"⚠️ No se encontró el archivo CSV: {eval_csv_paths}")
+        return
+
     episode_numbers = pd.read_csv(eval_csv_paths[0])['episode'].unique()
 
     # Get a list of unique episode numbers
@@ -19,13 +23,17 @@ def plot_eval(eval_csv_paths, output_name=None):
     if len(eval_csv_paths) == 1:
         eval_plot_path = eval_csv_paths[0].replace(".csv", ".png")
     else:
-        os.makedirs('tensorboard/eval_plots', exist_ok=True)
-        eval_plot_path = f'./tensorboard/eval_plots/{output_name}'
+        if out_dir is None:
+            out_dir = 'tensorboard/eval_plots'
+        os.makedirs(out_dir, exist_ok=True)
+        eval_plot_path = os.path.join(out_dir, output_name + ".png")
 
     models = ['Waypoints']
 
-    # Load the dataframe
     for e, path in enumerate(eval_csv_paths):
+        if not os.path.exists(path):
+            print(f"⚠️ Archivo no encontrado: {path}")
+            continue
         df = pd.read_csv(path)
         model_id = df.loc[df['model_id'] != 'route', 'model_id'].unique()[0]
         models.append(model_id)
@@ -94,10 +102,9 @@ def plot_eval(eval_csv_paths, output_name=None):
     fig.legend(handles, labels, loc='lower center', bbox_to_anchor=(0.5, 0.02))
     fig.tight_layout(rect=(0, 0.1 + 0.02 * len(labels), 1, 1))
 
-    # Adjust the bottom margin to make room for the legend
-    # Show the plot
     plt.savefig(eval_plot_path)
-
+    plt.close(fig)
+    print(f"✅ Guardado: {eval_plot_path}")
 
 def summary_eval(eval_csv_path):
     df = pd.read_csv(eval_csv_path)
@@ -105,22 +112,11 @@ def summary_eval(eval_csv_path):
     df = df[df['model_id'] != 'route']
     df = df.drop(['model_id', 'route_x', 'route_y'], axis=1)
 
-    # Get the total distance traveled from each episode based on last row
-    df_distance = df.groupby(['episode'], as_index=False).last()[['episode', 'distance']].rename(
-        columns={'distance': 'total_distance'})
-
-    # Get the total reward from each episode summing all the rewards
+    df_distance = df.groupby(['episode'], as_index=False).last()[['episode', 'distance']].rename(columns={'distance': 'total_distance'})
     df_reward = df.groupby(['episode'], as_index=False).sum()[['episode', 'reward']].rename(columns={'reward': 'total_reward'})
-
-    # Get the mean and std from: speed, center_dev and reward
-    df_mean_std = df.groupby(['episode'], as_index=False).agg(
-        {'speed': ['mean', 'std'], 'center_dev': ['mean', 'std'], 'reward': ['mean', 'std']})
+    df_mean_std = df.groupby(['episode'], as_index=False).agg({'speed': ['mean', 'std'], 'center_dev': ['mean', 'std'], 'reward': ['mean', 'std']})
     df_mean_std.columns = ['episode', 'speed_mean', 'speed_std', 'center_dev_mean', 'center_dev_std', 'reward_mean', 'reward_std']
-
-    # Get the RC, CS, "collision_interval", "CPS", "CPM" from each episode based on last row
-    df_routes_completed = df.groupby(['episode'], as_index=False).last()[['episode', 'routes_completed']]
-    df_routes_completed['routes_completed'] = df_routes_completed['routes_completed'].clip(upper=1)
-
+    df_routes_completed = df.groupby(['episode'], as_index=False).last()[['episode', 'routes_completed']].clip(upper=1)
     df_collision_speed = df.groupby(['episode'], as_index=False).last()[['episode', 'collision_speed']]
     df_collision_interval = df.groupby(['episode'], as_index=False).last()[['episode', 'collision_interval']]
     df_CPS = df.groupby(['episode'], as_index=False).last()[['episode', 'CPS']]
@@ -132,10 +128,7 @@ def summary_eval(eval_csv_path):
     df_waypoint = df_route.groupby(['episode'], as_index=False).last()[['episode', 'route_x', 'route_y']]
     df_success = df.groupby(['episode'], as_index=False).last()[['episode', 'vehicle_location_x', 'vehicle_location_y']]
     df_success = pd.merge(df_success, df_waypoint, on='episode')
-
-    # If the distance between the last waypoint and the vehicle is less than 5 meters, the episode was successful
-    df_success['success'] = df_success.apply(
-        lambda x: eucldist(x['vehicle_location_x'], x['vehicle_location_y'], x['route_x'], x['route_y']) < 5, axis=1)
+    df_success['success'] = df_success.apply(lambda x: eucldist(x['vehicle_location_x'], x['vehicle_location_y'], x['route_x'], x['route_y']) < 5, axis=1)
     df_success = df_success[['episode', 'success']]
     # Merge all the dataframes
     df_summary = pd.merge(df_distance, df_reward, on='episode')
@@ -167,17 +160,24 @@ def eucldist(x1, y1, x2, y2):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Compare evaluation results from different models")
-    parser.add_argument("--models", nargs='+', type=str, default="", help="Path to a model evaluate")
+    parser = argparse.ArgumentParser(description="Generar plots de evaluación entre modelos")
+    parser.add_argument("--models", nargs='+', type=str, required=True, help="Modelos a comparar")
+    parser.add_argument("--eval-dir", type=str, default="eval", help="Subcarpeta de evaluación")
+    parser.add_argument("--out-dir", type=str, default=None, help="Carpeta para guardar los plots")
     args = vars(parser.parse_args())
 
     compare_models = args['models']
+    eval_dir = args['eval_dir']
+    out_dir = args['out_dir']
+
     eval_csv_paths = []
     for model in compare_models:
         model_id, steps = model.split("-")
-        eval_csv_paths.append(os.path.join("tensorboard", model_id, "eval", f"model_{steps}_steps_eval.csv"))
-    plot_eval(eval_csv_paths, output_name="+".join(compare_models))
+        csv_path = os.path.join("tensorboard", model_id, eval_dir, f"model_{steps}_steps_eval.csv")
+        eval_csv_paths.append(csv_path)
 
+    if len(eval_csv_paths) > 0:
+        plot_eval(eval_csv_paths, output_name="+".join(compare_models), out_dir=out_dir)
 
 if __name__ == '__main__':
     main()

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Análisis de Evaluación VLM-RL (Elite Filter)</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+        <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+        <style>
+            body { background-color: #f8f9fa; padding-bottom: 100px; }
+            .card { border-radius: 12px; margin-bottom: 20px; border: none; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+            .plot-container { height: 400px; }
+            .elite-section { background: #1e293b; color: white; padding: 40px; border-radius: 20px; margin-top: 50px; }
+            .badge-elite { background-color: #fbbf24; color: #000; font-weight: bold; }
+        </style>
+    </head>
+    <body>
+        <div class="container-fluid py-4 px-5">
+            <h1 class="fw-bold mb-4">📊 Análisis de Evaluación (100 Checkpoints)</h1>
+            
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card p-3"><div id="as-plot" class="plot-container"></div></div>
+                    <div class="card p-3"><div id="rc-plot" class="plot-container"></div></div>
+                    <div class="card p-3"><div id="td-plot" class="plot-container"></div></div>
+                    <div class="card p-3"><div id="cs-plot" class="plot-container"></div></div>
+                    <div class="card p-3"><div id="sr-plot" class="plot-container"></div></div>
+                </div>
+            </div>
+
+            <!-- SECCIÓN NUEVA: ELITE CHECKPOINTS -->
+            <div class="elite-section shadow-lg">
+                <div class="row">
+                    <div class="col-md-12 text-center mb-4">
+                        <h2 class="display-5 fw-bold text-warning">✨ Elite Checkpoints</h2>
+                        <p class="lead">Modelos que superan simultáneamente todos los objetivos del paper.</p>
+                        <span class="badge bg-light text-dark">Filtro: AS>19.3 | RC>0.97 | TD>2028 | CS<0.02 | SR>0.93</span>
+                    </div>
+                </div>
+                
+                <div class="row align-items-center">
+                    <div class="col-md-7">
+                        <div id="elite-radar-plot" style="height: 600px;"></div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="card bg-dark text-white p-4 border-warning">
+                            <h4>📋 Lista de Modelos Elite</h4>
+                            <hr>
+                            <p>Se encontraron <strong>23</strong> modelos que cumplen el criterio.</p>
+                            <ul class="list-group list-group-flush bg-transparent">
+                                <li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>1,000,000 pasos</strong> (Distancia: 2552.66m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>150,000 pasos</strong> (Distancia: 2550.82m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>230,000 pasos</strong> (Distancia: 2553.94m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>260,000 pasos</strong> (Distancia: 2556.1m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>270,000 pasos</strong> (Distancia: 2557.73m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>280,000 pasos</strong> (Distancia: 2555.48m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>330,000 pasos</strong> (Distancia: 2550.81m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>370,000 pasos</strong> (Distancia: 2554.07m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>380,000 pasos</strong> (Distancia: 2551.73m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>460,000 pasos</strong> (Distancia: 2559.19m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>470,000 pasos</strong> (Distancia: 2558.45m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>650,000 pasos</strong> (Distancia: 2557.52m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>670,000 pasos</strong> (Distancia: 2554.33m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>690,000 pasos</strong> (Distancia: 2556.16m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>700,000 pasos</strong> (Distancia: 2554.19m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>710,000 pasos</strong> (Distancia: 2552.58m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>720,000 pasos</strong> (Distancia: 2551.72m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>730,000 pasos</strong> (Distancia: 2551.55m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>770,000 pasos</strong> (Distancia: 2552.2m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>800,000 pasos</strong> (Distancia: 2558.65m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>810,000 pasos</strong> (Distancia: 2552.12m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>920,000 pasos</strong> (Distancia: 2555.13m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>980,000 pasos</strong> (Distancia: 2553.1m)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            const steps = [10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000, 110000, 120000, 130000, 140000, 150000, 160000, 170000, 180000, 190000, 200000, 210000, 220000, 230000, 240000, 250000, 260000, 270000, 280000, 290000, 300000, 310000, 320000, 330000, 340000, 350000, 360000, 370000, 380000, 390000, 400000, 410000, 420000, 430000, 440000, 450000, 460000, 470000, 480000, 490000, 500000, 510000, 520000, 530000, 540000, 550000, 560000, 570000, 580000, 590000, 600000, 610000, 620000, 630000, 640000, 650000, 660000, 670000, 680000, 690000, 700000, 710000, 720000, 730000, 740000, 750000, 760000, 770000, 780000, 790000, 800000, 810000, 820000, 830000, 840000, 850000, 860000, 870000, 880000, 890000, 900000, 910000, 920000, 930000, 940000, 950000, 960000, 970000, 980000, 990000, 1000000];
+            const data_plot = [{"steps": 10000, "as": 0.47, "rc": 0.05, "td": 124.42, "cs": 0.0, "sr": 0.0, "error": 3.9617}, {"steps": 20000, "as": 0.58, "rc": 0.22, "td": 211.29, "cs": 0.0, "sr": 0.0, "error": 3.7483}, {"steps": 30000, "as": 1.03, "rc": 0.37, "td": 273.98, "cs": 0.0, "sr": 0.0, "error": 3.5425}, {"steps": 40000, "as": 9.05, "rc": 0.61, "td": 600.06, "cs": 1.9356, "sr": 0.0, "error": 21.6798}, {"steps": 50000, "as": 3.95, "rc": 0.66, "td": 351.2, "cs": 4.8304, "sr": 0.0, "error": 50.9707}, {"steps": 60000, "as": 13.97, "rc": 0.98, "td": 2518.57, "cs": 0.0, "sr": 1.0, "error": 0.7981}, {"steps": 70000, "as": 16.59, "rc": 0.79, "td": 2399.22, "cs": 0.04, "sr": 0.9, "error": 0.7316}, {"steps": 80000, "as": 12.25, "rc": 0.92, "td": 2466.7, "cs": 0.0333, "sr": 0.9, "error": 0.7912}, {"steps": 90000, "as": 8.21, "rc": 0.94, "td": 2472.27, "cs": 0.0044, "sr": 0.9, "error": 1.0062}, {"steps": 100000, "as": 9.0, "rc": 0.94, "td": 2472.75, "cs": 0.056, "sr": 0.9, "error": 1.1697}, {"steps": 110000, "as": 12.38, "rc": 1.0, "td": 2554.0, "cs": 0.0, "sr": 1.0, "error": 0.9177}, {"steps": 120000, "as": 21.04, "rc": 0.91, "td": 2553.88, "cs": 0.0, "sr": 1.0, "error": 0.6831}, {"steps": 130000, "as": 13.08, "rc": 1.0, "td": 2555.07, "cs": 0.0, "sr": 1.0, "error": 0.8821}, {"steps": 140000, "as": 21.88, "rc": 0.92, "td": 2555.25, "cs": 0.0, "sr": 1.0, "error": 0.7134}, {"steps": 150000, "as": 22.93, "rc": 1.0, "td": 2550.82, "cs": 0.0, "sr": 1.0, "error": 0.7459}, {"steps": 160000, "as": 23.5, "rc": 0.94, "td": 2553.35, "cs": 0.0, "sr": 1.0, "error": 0.7789}, {"steps": 170000, "as": 24.09, "rc": 0.88, "td": 2548.54, "cs": 0.0, "sr": 1.0, "error": 0.8638}, {"steps": 180000, "as": 22.49, "rc": 0.99, "td": 2532.57, "cs": 1.4927, "sr": 0.9, "error": 15.1894}, {"steps": 190000, "as": 23.56, "rc": 0.99, "td": 2377.39, "cs": 12.3739, "sr": 0.1, "error": 124.7837}, {"steps": 200000, "as": 22.85, "rc": 0.91, "td": 2552.11, "cs": 0.0, "sr": 1.0, "error": 0.7733}, {"steps": 210000, "as": 22.26, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7772}, {"steps": 220000, "as": 22.6, "rc": 0.91, "td": 2553.12, "cs": 0.0, "sr": 1.0, "error": 0.7811}, {"steps": 230000, "as": 23.26, "rc": 0.91, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7642}, {"steps": 240000, "as": 23.95, "rc": 0.91, "td": 2553.15, "cs": 0.0, "sr": 1.0, "error": 0.7919}, {"steps": 250000, "as": 24.14, "rc": 0.91, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7994}, {"steps": 260000, "as": 22.74, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7249}, {"steps": 270000, "as": 23.25, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7657}, {"steps": 280000, "as": 23.01, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.752}, {"steps": 290000, "as": 22.84, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7183}, {"steps": 300000, "as": 23.41, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7752}, {"steps": 310000, "as": 23.47, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7786}, {"steps": 320000, "as": 23.26, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7564}, {"steps": 330000, "as": 23.17, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.761}, {"steps": 340000, "as": 23.15, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7599}, {"steps": 350000, "as": 23.43, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7764}, {"steps": 360000, "as": 23.18, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7555}, {"steps": 370000, "as": 23.1, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.757}, {"steps": 380000, "as": 23.31, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7657}, {"steps": 390000, "as": 23.15, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7599}, {"steps": 400000, "as": 23.17, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.761}, {"steps": 410000, "as": 23.16, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7604}, {"steps": 420000, "as": 22.9, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7459}, {"steps": 430000, "as": 22.8, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7315}, {"steps": 440000, "as": 22.61, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7512}, {"steps": 450000, "as": 21.89, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7185}, {"steps": 460000, "as": 22.54, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7297}, {"steps": 470000, "as": 22.45, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7248}, {"steps": 480000, "as": 23.36, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7725}, {"steps": 490000, "as": 22.7, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7582}, {"steps": 500000, "as": 22.92, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.747}, {"steps": 510000, "as": 22.85, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7432}, {"steps": 520000, "as": 22.83, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7422}, {"steps": 530000, "as": 22.91, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7351}, {"steps": 540000, "as": 22.83, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7422}, {"steps": 550000, "as": 22.78, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7604}, {"steps": 560000, "as": 23.05, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7541}, {"steps": 570000, "as": 22.62, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7528}, {"steps": 580000, "as": 23.13, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7604}, {"steps": 590000, "as": 23.59, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7853}, {"steps": 600000, "as": 22.54, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7161}, {"steps": 610000, "as": 23.28, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7681}, {"steps": 620000, "as": 22.34, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7718}, {"steps": 630000, "as": 22.73, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7605}, {"steps": 640000, "as": 22.9, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7459}, {"steps": 650000, "as": 23.13, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7592}, {"steps": 660000, "as": 23.36, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7725}, {"steps": 670000, "as": 22.18, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7801}, {"steps": 680000, "as": 23.51, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7811}, {"steps": 690000, "as": 22.53, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7292}, {"steps": 700000, "as": 22.92, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.747}, {"steps": 710000, "as": 23.01, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7404}, {"steps": 720000, "as": 22.85, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7432}, {"steps": 730000, "as": 23.06, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7546}, {"steps": 740000, "as": 24.04, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.8086}, {"steps": 750000, "as": 22.85, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7432}, {"steps": 760000, "as": 22.14, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7265}, {"steps": 770000, "as": 23.06, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7546}, {"steps": 780000, "as": 22.83, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7422}, {"steps": 790000, "as": 23.43, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7764}, {"steps": 800000, "as": 23.63, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7874}, {"steps": 810000, "as": 22.61, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7512}, {"steps": 820000, "as": 23.97, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.8049}, {"steps": 830000, "as": 22.69, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7554}, {"steps": 840000, "as": 23.37, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7731}, {"steps": 850000, "as": 23.3, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7692}, {"steps": 860000, "as": 23.63, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7874}, {"steps": 870000, "as": 23.96, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.8044}, {"steps": 880000, "as": 23.25, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7665}, {"steps": 890000, "as": 23.81, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7963}, {"steps": 900000, "as": 23.36, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7725}, {"steps": 910000, "as": 24.19, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.8164}, {"steps": 920000, "as": 20.84, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7394}, {"steps": 930000, "as": 23.72, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7916}, {"steps": 940000, "as": 22.77, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7598}, {"steps": 950000, "as": 14.85, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.8354}, {"steps": 960000, "as": 23.25, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.7665}, {"steps": 970000, "as": 24.5, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.833}, {"steps": 980000, "as": 19.53, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.6055}, {"steps": 990000, "as": 13.85, "rc": 0.96, "td": 2553.1, "cs": 0.0, "sr": 1.0, "error": 0.8872}, {"steps": 1000000, "as": 23.65, "rc": 1.0, "td": 2552.66, "cs": 0.0, "sr": 1.0, "error": 0.7834}];
+            const elite_data = [{"steps": 1000000, "as": 23.65, "rc": 1.0, "td": 2552.66, "cs": 0.0, "sr": 1.0, "error": 0.7838}, {"steps": 150000, "as": 22.93, "rc": 1.0, "td": 2550.82, "cs": 0.0, "sr": 1.0, "error": 0.7459}, {"steps": 230000, "as": 23.26, "rc": 1.0, "td": 2553.94, "cs": 0.0, "sr": 1.0, "error": 0.7642}, {"steps": 260000, "as": 22.74, "rc": 0.99, "td": 2556.1, "cs": 0.0, "sr": 1.0, "error": 0.7249}, {"steps": 270000, "as": 23.25, "rc": 1.0, "td": 2557.73, "cs": 0.0, "sr": 1.0, "error": 0.7657}, {"steps": 280000, "as": 23.01, "rc": 1.0, "td": 2555.48, "cs": 0.0, "sr": 1.0, "error": 0.752}, {"steps": 330000, "as": 23.98, "rc": 1.0, "td": 2550.81, "cs": 0.0, "sr": 1.0, "error": 0.8004}, {"steps": 370000, "as": 23.31, "rc": 1.0, "td": 2554.07, "cs": 0.0, "sr": 1.0, "error": 0.7672}, {"steps": 380000, "as": 23.31, "rc": 1.0, "td": 2551.73, "cs": 0.0, "sr": 1.0, "error": 0.7659}, {"steps": 460000, "as": 22.54, "rc": 1.0, "td": 2559.19, "cs": 0.0, "sr": 1.0, "error": 0.7297}, {"steps": 470000, "as": 22.45, "rc": 1.0, "td": 2558.45, "cs": 0.0, "sr": 1.0, "error": 0.7248}, {"steps": 650000, "as": 23.13, "rc": 1.0, "td": 2557.52, "cs": 0.0, "sr": 1.0, "error": 0.7592}, {"steps": 670000, "as": 23.69, "rc": 0.99, "td": 2554.33, "cs": 0.0, "sr": 1.0, "error": 0.7725}, {"steps": 690000, "as": 23.38, "rc": 1.0, "td": 2556.16, "cs": 0.0, "sr": 1.0, "error": 0.7715}, {"steps": 700000, "as": 23.58, "rc": 1.0, "td": 2554.19, "cs": 0.0, "sr": 1.0, "error": 0.7813}, {"steps": 710000, "as": 23.01, "rc": 0.99, "td": 2552.58, "cs": 0.0, "sr": 1.0, "error": 0.7404}, {"steps": 720000, "as": 23.66, "rc": 1.0, "td": 2551.72, "cs": 0.0, "sr": 1.0, "error": 0.7842}, {"steps": 730000, "as": 23.88, "rc": 1.0, "td": 2551.55, "cs": 0.0, "sr": 1.0, "error": 0.7954}, {"steps": 770000, "as": 23.73, "rc": 1.0, "td": 2552.2, "cs": 0.0, "sr": 1.0, "error": 0.7878}, {"steps": 800000, "as": 24.0, "rc": 1.0, "td": 2558.65, "cs": 0.0, "sr": 1.0, "error": 0.8051}, {"steps": 810000, "as": 24.19, "rc": 1.0, "td": 2552.12, "cs": 0.0, "sr": 1.0, "error": 0.8164}, {"steps": 920000, "as": 20.84, "rc": 1.0, "td": 2555.13, "cs": 0.0, "sr": 1.0, "error": 0.7394}, {"steps": 980000, "as": 19.53, "rc": 1.0, "td": 2555.28, "cs": 0.0, "sr": 1.0, "error": 0.6055}];
+            const target = {"AS": 19.3, "RC": 0.97, "TD": 2028.2, "CS": 0.02, "SR": 0.93};
+
+            const createPlot = (id, key, title, targetVal, yLabel, color) => {
+                const vals = data_plot.map(d => d[key]);
+                Plotly.newPlot(id, [
+                    { x: steps, y: vals, name: 'Local', type: 'scatter', mode: 'lines+markers', line: {color: color} },
+                    { x: [steps[0], steps[steps.length-1]], y: [targetVal, targetVal], name: 'Paper', mode: 'lines', line: {dash: 'dash', color: 'red'} }
+                ], { title: title, xaxis: { title: 'Pasos' }, yaxis: { title: yLabel }, margin: {t:50, b:40, l:60, r:20} });
+            };
+
+            createPlot('as-plot', 'as', '1. Velocidad Media (AS ↑)', target.AS, 'km/h', '#3498db');
+            createPlot('rc-plot', 'rc', '2. Completitud de Ruta (RC ↑)', target.RC, 'Ratio', '#9b59b6');
+            createPlot('td-plot', 'td', '3. Distancia Total (TD ↑)', target.TD, 'm', '#f1c40f');
+            createPlot('cs-plot', 'cs', '4. Velocidad de Colisión (CS ↓)', target.CS, 'km/h', '#e67e22');
+            createPlot('sr-plot', 'sr', '5. Tasa de Éxito (SR ↑)', target.SR, 'Ratio', '#2ecc71');
+
+            // RADAR PLOT PARA ELITE
+            if (elite_data.length > 0) {
+                const radarTraces = elite_data.map(r => ({
+                    type: 'scatterpolar',
+                    r: [r.as/25, r.rc, r.td/3000, r.sr, 1 - (r.cs/0.5)],
+                    theta: ['AS (Escalado)', 'RC', 'TD (Escalado)', 'SR', 'Seguridad (1-CS)'],
+                    fill: 'toself',
+                    name: r.steps + ' steps'
+                }));
+                
+                // Agregar el Target del Paper al Radar
+                radarTraces.push({
+                    type: 'scatterpolar',
+                    r: [target.AS/25, target.RC, target.TD/3000, target.SR, 1 - (target.CS/0.5)],
+                    theta: ['AS (Escalado)', 'RC', 'TD (Escalado)', 'SR', 'Seguridad (1-CS)'],
+                    fill: 'none',
+                    name: 'PAPER TARGET',
+                    line: { color: 'red', width: 3, dash: 'dash' }
+                });
+
+                Plotly.newPlot('elite-radar-plot', radarTraces, {
+                    polar: { radialaxis: { visible: true, range: [0, 1.1] } },
+                    showlegend: true,
+                    paper_bgcolor: 'rgba(0,0,0,0)',
+                    plot_bgcolor: 'rgba(0,0,0,0)',
+                    font: { color: 'white' }
+                });
+            }
+        </script>
+    </body>
+    </html>
