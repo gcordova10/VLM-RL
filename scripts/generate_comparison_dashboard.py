@@ -9,47 +9,47 @@ from plotly.subplots import make_subplots
 baseline_path = "/media/nemesis/disco4tb/Documents/VLM-RL/tensorboard/CLIPRewardedSAC_20250930_154046_idvlm_rl/events.out.tfevents.1759239646.nemesis.48840.0"
 ours_path = "/media/nemesis/disco4tb/Documents_VLM-RL/investigacion/VLM-RL-PRIVATE/tensorboard/CLIPRewardedSAC_20260212_082504_idvlm_rl/events.out.tfevents.1770881104.nemesis.3270074.0"
 
-# Metrics mapping with descriptions
+# Metrics mapping with descriptions in English
 metrics_info = {
     'RC (Routes Completed)': {
         'tag': 'custom/routes_completed',
-        'desc': 'Porcentaje de rutas finalizadas con éxito.'
+        'desc': 'Percentage of routes successfully completed.'
     },
     'AS (Avg Speed)': {
         'tag': 'custom/avg_speed',
-        'desc': 'Velocidad promedio del vehículo (km/h).'
+        'desc': 'Average vehicle speed (km/h).'
     },
     'CR (Collision Rate)': {
         'tag': 'custom/collision_rate',
-        'desc': 'Tasa de episodios que terminan en choque.'
+        'desc': 'Rate of episodes ending in a collision.'
     },
     'CPM (Collisions Per Mile)': {
         'tag': 'custom/CPM',
-        'desc': 'Frecuencia de choques por milla recorrida.'
+        'desc': 'Frequency of collisions per mile traveled.'
     },
     'CS (Collision Speed)': {
         'tag': 'custom/collision_speed',
-        'desc': 'Velocidad en el momento del impacto.'
+        'desc': 'Vehicle speed at the moment of impact.'
     },
     'ICT (Collision Interval)': {
         'tag': 'custom/collision_interval',
-        'desc': 'Intervalo de tiempo/pasos sin cometer errores.'
+        'desc': 'Time/steps interval of continuous safe driving.'
     },
     'ACD (Avg Center Dev)': {
         'tag': 'custom/avg_center_dev',
-        'desc': 'Desviación promedio respecto al centro del carril (m).'
+        'desc': 'Average deviation from the lane center (m).'
     },
     'Smoothness': {
         'tag': 'custom/mean_steer_smoothness_x100',
-        'desc': 'Magnitud de variación brusca en dirección (volantazos).'
+        'desc': 'Magnitude of sharp steering variations (steering jitter).'
     },
     'Total Reward': {
         'tag': 'custom/total_reward',
-        'desc': 'Recompensa acumulada con penalizaciones/bonos.'
+        'desc': 'Cumulative reward including all penalties and bonuses.'
     },
     'GT Reward': {
         'tag': 'rollout/ep_gt_rew_mean',
-        'desc': 'Recompensa real del entorno (Ground Truth).'
+        'desc': 'Environment Ground Truth reward (raw performance).'
     }
 }
 
@@ -89,24 +89,37 @@ def generate_dashboard():
     baseline_data = extract_metrics(baseline_path, "Baseline")
     ours_data = extract_metrics(ours_path, "Ours")
     
-    all_labels = list(metrics_info.keys())
-    num_metrics = len(all_labels)
-    cols = 2
+    # Reorder labels to match user request: 3 per row, Smoothness last
+    # Current labels: RC, AS, CR, CPM, CS, ICT, ACD, Smoothness, Total Reward, GT Reward
+    ordered_labels = [
+        'RC (Routes Completed)', 'AS (Avg Speed)', 'CR (Collision Rate)',
+        'CPM (Collisions Per Mile)', 'CS (Collision Speed)', 'ICT (Collision Interval)',
+        'ACD (Avg Center Dev)', 'Total Reward', 'GT Reward',
+        'Smoothness'
+    ]
+    
+    num_metrics = len(ordered_labels)
+    cols = 3
     rows = (num_metrics + cols - 1) // cols
     
     # Custom titles with descriptions
-    titles = [f"<b>{label}</b><br><span style='font-size: 10px;'>{metrics_info[label]['desc']}</span>" for label in all_labels]
+    titles = [f"<b>{label}</b><br><span style='font-size: 10px;'>{metrics_info[label]['desc']}</span>" for label in ordered_labels]
+    
+    # Define specs for the last row to span all columns
+    specs = [[{} for _ in range(cols)] for _ in range(rows - 1)]
+    specs.append([{"colspan": cols}, None, None]) # Smoothness spans 3 columns
     
     fig = make_subplots(
         rows=rows, cols=cols,
         subplot_titles=titles,
-        vertical_spacing=0.1,
-        horizontal_spacing=0.1
+        vertical_spacing=0.12,
+        horizontal_spacing=0.05,
+        specs=specs
     )
     
-    colors = {'Baseline': '#636EFA', 'Ours': '#00CC96'} # Green for "Ours" to show progress
+    colors = {'Baseline': '#636EFA', 'Ours': '#00CC96'} 
     
-    for i, label in enumerate(all_labels):
+    for i, label in enumerate(ordered_labels):
         row = (i // cols) + 1
         col = (i % cols) + 1
         
@@ -158,16 +171,16 @@ def generate_dashboard():
         title_text="VLM-RL Advanced Performance Comparison Dashboard",
         template="plotly_dark",
         height=450 * rows,
-        width=1300,
+        width=1500,
         legend=dict(
             orientation="h",
             yanchor="bottom",
-            y=1.02,
+            y=1.05,
             xanchor="right",
             x=1,
             bgcolor="rgba(0,0,0,0)"
         ),
-        margin=dict(t=150, b=50, l=50, r=50)
+        margin=dict(t=250, b=50, l=50, r=50)
     )
     
     # Update axes
@@ -175,7 +188,7 @@ def generate_dashboard():
     fig.update_yaxes(gridcolor='#333')
 
     # Add vertical lines at specific steps
-    red_steps = [660000, 410000, 820000, 510000, 100000]
+    red_steps = [410000, 820000, 510000, 100000]
     yellow_steps = [470000, 990000]
 
     for step in red_steps:
@@ -185,7 +198,6 @@ def generate_dashboard():
         fig.add_vline(x=step, line_width=2, line_dash="dash", line_color="yellow", opacity=0.7)
 
     output_dir = "tensorboard_analysis"
-    os.makedirs(output_dir, exist_ok=True)
     output_path = os.path.join(output_dir, "vlmrl_comparison_dashboard_final.html")
     
     print(f"Saving dashboard to {output_path}")
