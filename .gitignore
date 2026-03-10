@@ -2,17 +2,18 @@
 # Ignorar carpetas de caché de Python
 __pycache__/
 
-paper
+paper/CLIPRewardedSAC_20250930_154046_idvlm_rl_tensorboard_exports
 tensorboard/
 .vscode
-
 *.txt
-
-extract_*.py
-
-
 tools
 2412.15544v1.pdf
-
 carla_env.yml
 eval_all.py
+*.avi
+*.gif
+clips
+graph_generation/plots
+*.png
+*.csv
+

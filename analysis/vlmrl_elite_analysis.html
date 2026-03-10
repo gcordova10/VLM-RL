@@ -2,7 +2,7 @@
     <html>
     <head>
         <meta charset="UTF-8">
-        <title>Análisis de Evaluación VLM-RL (Elite Filter)</title>
+        <title>VLM-RL Evaluation Analysis (Elite Filter)</title>
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
         <style>
@@ -15,7 +15,7 @@
     </head>
     <body>
         <div class="container-fluid py-4 px-5">
-            <h1 class="fw-bold mb-4">📊 Análisis de Evaluación (100 Checkpoints)</h1>
+            <h1 class="fw-bold mb-4">📊 Evaluation Analysis (100 Checkpoints)</h1>
             
             <div class="row">
                 <div class="col-lg-12">
@@ -32,8 +32,8 @@
                 <div class="row">
                     <div class="col-md-12 text-center mb-4">
                         <h2 class="display-5 fw-bold text-warning">✨ Elite Checkpoints</h2>
-                        <p class="lead">Modelos que superan simultáneamente todos los objetivos del paper.</p>
-                        <span class="badge bg-light text-dark">Filtro: AS>19.3 | RC>0.97 | TD>2028 | CS<0.02 | SR>0.93</span>
+                        <p class="lead">Models that simultaneously exceed all the paper objectives.</p>
+                        <span class="badge bg-light text-dark">Filter: AS>19.3 | RC>0.97 | TD>2028 | CS<0.02 | SR>0.93</span>
                     </div>
                 </div>
                 
@@ -43,11 +43,11 @@
                     </div>
                     <div class="col-md-5">
                         <div class="card bg-dark text-white p-4 border-warning">
-                            <h4>📋 Lista de Modelos Elite</h4>
+                            <h4>📋 Elite Models List</h4>
                             <hr>
-                            <p>Se encontraron <strong>23</strong> modelos que cumplen el criterio.</p>
+                            <p>Found <strong>23</strong> models that meet the criteria.</p>
                             <ul class="list-group list-group-flush bg-transparent">
-                                <li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>1,000,000 pasos</strong> (Distancia: 2552.66m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>150,000 pasos</strong> (Distancia: 2550.82m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>230,000 pasos</strong> (Distancia: 2553.94m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>260,000 pasos</strong> (Distancia: 2556.1m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>270,000 pasos</strong> (Distancia: 2557.73m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>280,000 pasos</strong> (Distancia: 2555.48m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>330,000 pasos</strong> (Distancia: 2550.81m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>370,000 pasos</strong> (Distancia: 2554.07m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>380,000 pasos</strong> (Distancia: 2551.73m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>460,000 pasos</strong> (Distancia: 2559.19m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>470,000 pasos</strong> (Distancia: 2558.45m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>650,000 pasos</strong> (Distancia: 2557.52m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>670,000 pasos</strong> (Distancia: 2554.33m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>690,000 pasos</strong> (Distancia: 2556.16m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>700,000 pasos</strong> (Distancia: 2554.19m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>710,000 pasos</strong> (Distancia: 2552.58m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>720,000 pasos</strong> (Distancia: 2551.72m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>730,000 pasos</strong> (Distancia: 2551.55m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>770,000 pasos</strong> (Distancia: 2552.2m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>800,000 pasos</strong> (Distancia: 2558.65m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>810,000 pasos</strong> (Distancia: 2552.12m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>920,000 pasos</strong> (Distancia: 2555.13m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>980,000 pasos</strong> (Distancia: 2553.1m)</li>
+                                <li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>1,000,000 steps</strong> (Distance: 2552.66m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>150,000 steps</strong> (Distance: 2550.82m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>230,000 steps</strong> (Distance: 2553.94m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>260,000 steps</strong> (Distance: 2556.1m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>270,000 steps</strong> (Distance: 2557.73m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>280,000 steps</strong> (Distance: 2555.48m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>330,000 steps</strong> (Distance: 2550.81m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>370,000 steps</strong> (Distance: 2554.07m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>380,000 steps</strong> (Distance: 2551.73m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>460,000 steps</strong> (Distance: 2559.19m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>470,000 steps</strong> (Distance: 2558.45m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>650,000 steps</strong> (Distance: 2557.52m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>670,000 steps</strong> (Distance: 2554.33m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>690,000 steps</strong> (Distance: 2556.16m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>700,000 steps</strong> (Distance: 2554.19m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>710,000 steps</strong> (Distance: 2552.58m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>720,000 steps</strong> (Distance: 2551.72m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>730,000 steps</strong> (Distance: 2551.55m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>770,000 steps</strong> (Distance: 2552.2m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>800,000 steps</strong> (Distance: 2558.65m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>810,000 steps</strong> (Distance: 2552.12m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>920,000 steps</strong> (Distance: 2555.13m)</li><li class='list-group-item bg-transparent text-white border-secondary'>💎 <strong>980,000 steps</strong> (Distance: 2553.1m)</li>
                             </ul>
                         </div>
                     </div>
@@ -66,21 +66,21 @@
                 Plotly.newPlot(id, [
                     { x: steps, y: vals, name: 'Local', type: 'scatter', mode: 'lines+markers', line: {color: color} },
                     { x: [steps[0], steps[steps.length-1]], y: [targetVal, targetVal], name: 'Paper', mode: 'lines', line: {dash: 'dash', color: 'red'} }
-                ], { title: title, xaxis: { title: 'Pasos' }, yaxis: { title: yLabel }, margin: {t:50, b:40, l:60, r:20} });
+                ], { title: title, xaxis: { title: 'Steps' }, yaxis: { title: yLabel }, margin: {t:50, b:40, l:60, r:20} });
             };
 
-            createPlot('as-plot', 'as', '1. Velocidad Media (AS ↑)', target.AS, 'km/h', '#3498db');
-            createPlot('rc-plot', 'rc', '2. Completitud de Ruta (RC ↑)', target.RC, 'Ratio', '#9b59b6');
-            createPlot('td-plot', 'td', '3. Distancia Total (TD ↑)', target.TD, 'm', '#f1c40f');
-            createPlot('cs-plot', 'cs', '4. Velocidad de Colisión (CS ↓)', target.CS, 'km/h', '#e67e22');
-            createPlot('sr-plot', 'sr', '5. Tasa de Éxito (SR ↑)', target.SR, 'Ratio', '#2ecc71');
+            createPlot('as-plot', 'as', '1. Average Speed (AS ↑)', target.AS, 'km/h', '#3498db');
+            createPlot('rc-plot', 'rc', '2. Route Completion (RC ↑)', target.RC, 'Ratio', '#9b59b6');
+            createPlot('td-plot', 'td', '3. Total Distance (TD ↑)', target.TD, 'm', '#f1c40f');
+            createPlot('cs-plot', 'cs', '4. Collision Speed (CS ↓)', target.CS, 'km/h', '#e67e22');
+            createPlot('sr-plot', 'sr', '5. Success Rate (SR ↑)', target.SR, 'Ratio', '#2ecc71');
 
             // RADAR PLOT PARA ELITE
             if (elite_data.length > 0) {
                 const radarTraces = elite_data.map(r => ({
                     type: 'scatterpolar',
                     r: [r.as/25, r.rc, r.td/3000, r.sr, 1 - (r.cs/0.5)],
-                    theta: ['AS (Escalado)', 'RC', 'TD (Escalado)', 'SR', 'Seguridad (1-CS)'],
+                    theta: ['AS (Scaled)', 'RC', 'TD (Scaled)', 'SR', 'Safety (1-CS)'],
                     fill: 'toself',
                     name: r.steps + ' steps'
                 }));
@@ -89,7 +89,7 @@
                 radarTraces.push({
                     type: 'scatterpolar',
                     r: [target.AS/25, target.RC, target.TD/3000, target.SR, 1 - (target.CS/0.5)],
-                    theta: ['AS (Escalado)', 'RC', 'TD (Escalado)', 'SR', 'Seguridad (1-CS)'],
+                    theta: ['AS (Scaled)', 'RC', 'TD (Scaled)', 'SR', 'Safety (1-CS)'],
                     fill: 'none',
                     name: 'PAPER TARGET',
                     line: { color: 'red', width: 3, dash: 'dash' }
