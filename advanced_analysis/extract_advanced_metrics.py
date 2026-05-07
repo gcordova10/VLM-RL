@@ -4,9 +4,9 @@ import glob
 import numpy as np
 from tqdm import tqdm
 import json
+import sys
 
-def extract_metrics():
-    base_eval_dir = '/media/nemesis/disco4tb/Documents/VLM-RL/tensorboard/CLIPRewardedSAC_20250930_154046_idvlm_rl'
+def extract_metrics(base_eval_dir, output_path):
     eval_folders = [d for d in os.listdir(base_eval_dir) if os.path.isdir(os.path.join(base_eval_dir, d)) and d.startswith('eval')]
     
     advanced_data = []
@@ -31,7 +31,8 @@ def extract_metrics():
                 # Convert numeric columns
                 numeric_cols = ['speed', 'center_dev', 'steer', 'throttle', 'collision_speed']
                 for col in numeric_cols:
-                    df_clean[col] = pd.to_numeric(df_clean[col], errors='coerce')
+                    if col in df_clean.columns:
+                        df_clean[col] = pd.to_numeric(df_clean[col], errors='coerce')
                 
                 # Group by episode to get per-episode metrics first
                 episodes = df_clean.groupby('episode')
@@ -39,16 +40,16 @@ def extract_metrics():
                 ep_metrics = []
                 for name, group in episodes:
                     # Basic
-                    avg_speed = group['speed'].mean()
-                    avg_center_dev = group['center_dev'].mean()
-                    max_center_dev = group['center_dev'].max()
+                    avg_speed = group['speed'].mean() if 'speed' in group.columns else 0
+                    avg_center_dev = group['center_dev'].mean() if 'center_dev' in group.columns else 0
+                    max_center_dev = group['center_dev'].max() if 'center_dev' in group.columns else 0
                     
                     # Quality: Jerk (Stability) - difference between consecutive steps
-                    steer_diff = group['steer'].diff().abs().mean()
-                    throttle_diff = group['throttle'].diff().abs().mean()
+                    steer_diff = group['steer'].diff().abs().mean() if 'steer' in group.columns else 0
+                    throttle_diff = group['throttle'].diff().abs().mean() if 'throttle' in group.columns else 0
                     
                     # Safety
-                    collisions = (group['collision_speed'] > 0).any()
+                    collisions = (group['collision_speed'] > 0).any() if 'collision_speed' in group.columns else False
                     
                     ep_metrics.append({
                         'avg_speed': avg_speed,
@@ -88,11 +89,17 @@ def extract_metrics():
                 # print(f"Error processing {f}: {e}")
                 continue
 
+    # Asegurar que el directorio de salida existe
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    
     # Save to JSON
-    output_path = 'advanced_analysis/data/advanced_metrics.json'
     with open(output_path, 'w') as out:
         json.dump(advanced_data, out, indent=2)
     print(f"Saved advanced metrics to {output_path}")
 
 if __name__ == "__main__":
-    extract_metrics()
+    if len(sys.argv) < 3:
+        print("Usage: python3 advanced_analysis/extract_advanced_metrics.py <BASE_EVAL_DIR> <OUTPUT_JSON>")
+        sys.exit(1)
+        
+    extract_metrics(sys.argv[1], sys.argv[2])

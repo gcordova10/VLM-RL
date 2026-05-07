@@ -1,12 +1,18 @@
 import json
 import os
+import sys
 
-def generate_advanced_dashboard():
-    data_path = '/media/nemesis/disco4tb/Documents/VLM-RL/advanced_analysis/data/advanced_metrics.json'
-    html_path = '/media/nemesis/disco4tb/Documents/VLM-RL/advanced_analysis/vlmrl_scenario_analysis.html'
-    
+def generate_advanced_dashboard(data_path, html_path):
+    if not os.path.exists(data_path):
+        print(f"Error: {data_path} not found")
+        return
+        
     with open(data_path, 'r') as f:
         data = json.load(f)
+
+    # Añadir Town02 a las opciones del selector si está en los datos
+    towns_in_data = sorted(list(set(d['town'] for d in data)))
+    town_options = "\n".join([f'<option value="{t}">{t}</option>' for t in towns_in_data])
 
     html_content = f"""
     <!DOCTYPE html>
@@ -41,10 +47,7 @@ def generate_advanced_dashboard():
                             <label class="form-label">Seleccionar Escenario (Town)</label>
                             <select id="town-select" class="form-select" onchange="updateCharts()">
                                 <option value="All">Todos los Towns</option>
-                                <option value="Town01">Town 01 (Simple)</option>
-                                <option value="Town03">Town 03 (Complejo)</option>
-                                <option value="Town04">Town 04 (Autovía)</option>
-                                <option value="Town05">Town 05 (Urbano)</option>
+                                {town_options}
                             </select>
                         </div>
                         <div class="mb-3">
@@ -174,7 +177,11 @@ def generate_advanced_dashboard():
     
     with open(html_path, 'w') as f:
         f.write(html_content)
-    print(f"Dashboard generado: {{html_path}}")
+    print(f"Dashboard generado: {html_path}")
 
 if __name__ == "__main__":
-    generate_advanced_dashboard()
+    if len(sys.argv) < 3:
+        print("Usage: python3 advanced_analysis/generate_advanced_dashboard.py <INPUT_JSON> <OUTPUT_HTML>")
+        sys.exit(1)
+        
+    generate_advanced_dashboard(sys.argv[1], sys.argv[2])

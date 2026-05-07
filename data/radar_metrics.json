@@ -1,0 +1,72 @@
+{
+  "baseline": {
+    "470000": {
+      "routes_completed": 9.655256271362305,
+      "CPM": 1.3307074308395386,
+      "avg_center_dev": 0.0993802398443222,
+      "collision_interval": 8209.0,
+      "avg_speed": 18.78157615661621,
+      "collision_speed": 0.0969451367855072,
+      "collision_rate": 0.7400000095367432,
+      "total_reward": 3621.776611328125,
+      "ep_gt_rew_mean": 1031.886474609375
+    },
+    "990000": {
+      "routes_completed": 8.002463340759277,
+      "CPM": 0.6478937268257141,
+      "avg_center_dev": 0.07078123837709427,
+      "collision_interval": 30037.0,
+      "avg_speed": 19.860872268676758,
+      "collision_speed": 0.01760762371122837,
+      "collision_rate": 0.8500000238418579,
+      "total_reward": 3452.89697265625,
+      "ep_gt_rew_mean": 1635.36669921875
+    }
+  },
+  "ours": {
+    "100000": {
+      "routes_completed": 8.003520965576172,
+      "CPM": 7.071399688720703,
+      "avg_center_dev": 0.21531742811203003,
+      "collision_interval": 543.0,
+      "avg_speed": 18.439117431640625,
+      "collision_speed": 0.20566010475158691,
+      "collision_rate": 0.5,
+      "total_reward": 3388.750244140625,
+      "ep_gt_rew_mean": 278.941162109375
+    },
+    "410000": {
+      "routes_completed": 8.126229286193848,
+      "CPM": 2.6615891456604004,
+      "avg_center_dev": 0.05846955254673958,
+      "collision_interval": 16326.0,
+      "avg_speed": 19.280824661254883,
+      "collision_speed": 0.013266346417367458,
+      "collision_rate": 0.7900000214576721,
+      "total_reward": 4349.345703125,
+      "ep_gt_rew_mean": 1861.749267578125
+    },
+    "510000": {
+      "routes_completed": 3.1661720275878906,
+      "CPM": 0.7408567070960999,
+      "avg_center_dev": 0.06304533779621124,
+      "collision_interval": 18025.0,
+      "avg_speed": 14.825976371765137,
+      "collision_speed": 1.9267723560333252,
+      "collision_rate": 0.8199999928474426,
+      "total_reward": 2095.17041015625,
+      "ep_gt_rew_mean": 1853.1319580078125
+    },
+    "820000": {
+      "routes_completed": 8.453415870666504,
+      "CPM": 4.931882381439209,
+      "avg_center_dev": 0.055186592042446136,
+      "collision_interval": 7026.0,
+      "avg_speed": 19.553640365600586,
+      "collision_speed": 0.03705118969082832,
+      "collision_rate": 0.7599999904632568,
+      "total_reward": 4288.19091796875,
+      "ep_gt_rew_mean": 2058.2958984375
+    }
+  }
+}

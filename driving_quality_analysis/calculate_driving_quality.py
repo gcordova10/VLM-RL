@@ -3,11 +3,9 @@ import pandas as pd
 import glob
 import json
 import re
+import sys
 
-def calculate_all_metrics():
-    base_path = '/media/nemesis/disco4tb/Documents/VLM-RL/tensorboard/CLIPRewardedSAC_20250930_154046_idvlm_rl'
-    output_dir = '/media/nemesis/disco4tb/Documents/VLM-RL/driving_quality_analysis'
-    
+def calculate_metrics(base_path, output_json, output_html=None):
     scenarios_map = {
         "eval": ("Town02", "regular"),
         "evalempty": ("Town02", "empty"),
@@ -32,6 +30,7 @@ def calculate_all_metrics():
         folder_path = os.path.join(base_path, folder)
         if not os.path.exists(folder_path): continue
             
+        print(f"Procesando {folder}...")
         csv_files = glob.glob(os.path.join(folder_path, "model_*_steps_eval.csv"))
         for f in csv_files:
             try:
@@ -39,27 +38,50 @@ def calculate_all_metrics():
                 if not match: continue
                 steps = int(match.group(1))
                 df = pd.read_csv(f, on_bad_lines='skip')
+                
+                # Check for required columns
+                if 'steer' not in df.columns or 'speed' not in df.columns:
+                    continue
+                    
                 df_clean = df[pd.to_numeric(df['steer'], errors='coerce').notnull()].copy()
                 df_clean['steer'] = df_clean['steer'].astype(float)
                 df_clean['speed'] = df_clean['speed'].astype(float)
+                
+                # Add center_dev if available
+                center_dev = 0.0
+                if 'dist_to_center' in df_clean.columns:
+                    df_clean['dist_to_center'] = df_clean['dist_to_center'].astype(float)
+                    center_dev = df_clean['dist_to_center'].abs().mean()
                 
                 if df_clean.empty: continue
                 
                 jitter = df_clean.groupby('episode')['steer'].std().mean()
                 avg_speed = df_clean['speed'].mean()
-                stability = max(0, 1 - (jitter * 2.5)) 
+                
+                # Cálculo de estabilidad (Metodología original)
+                stability = max(0, 1 - (jitter * 2.5))
                 
                 all_results.append({
                     "steps": steps, "town": town, "density": density,
-                    "jitter": round(float(jitter), 4), "speed": round(float(avg_speed), 2),
+                    "jitter": round(float(jitter), 4), 
+                    "speed": round(float(avg_speed), 2),
+                    "center_dev": round(float(center_dev), 4),
                     "stability": round(float(stability), 4)
                 })
-            except: continue
+            except Exception as e:
+                continue
 
-    # GENERAR HTML CON DATOS INYECTADOS
-    json_data = json.dumps(all_results)
-    
-    html_template = f"""
+    # Guardar JSON
+    with open(output_json, "w") as f:
+        json.dump(all_results, f, indent=2)
+    print(f"Generated {output_json} with {len(all_results)} metrics.")
+
+    # Generar HTML si se solicita
+    if output_html:
+        generate_html(all_results, output_html)
+
+def generate_html(data, output_html):
+    html_template = """
     <!DOCTYPE html>
     <html>
     <head>
@@ -68,14 +90,14 @@ def calculate_all_metrics():
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
         <style>
-            body {{ background-color: #0f172a; color: #e2e8f0; font-family: 'Segoe UI', sans-serif; padding: 30px; }}
-            .control-panel {{ background: #1e293b; border: 1px solid #38bdf8; border-radius: 20px; padding: 25px; margin-bottom: 30px; }}
-            .card {{ background: #1e293b; border: 1px solid #334155; border-radius: 15px; margin-bottom: 20px; }}
-            .text-info {{ color: #38bdf8 !important; }}
-            .text-warning {{ color: #f59e0b !important; }}
-            .text-secondary {{ color: #94a3b8 !important; }}
-            select.form-select {{ background-color: #0f172a; color: #e2e8f0; border-color: #334155; }}
-            h1 {{ color: #38bdf8; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; }}
+            body { background-color: #0f172a; color: #e2e8f0; font-family: 'Segoe UI', sans-serif; padding: 30px; }
+            .control-panel { background: #1e293b; border: 1px solid #38bdf8; border-radius: 20px; padding: 25px; margin-bottom: 30px; }
+            .card { background: #1e293b; border: 1px solid #334155; border-radius: 15px; margin-bottom: 20px; }
+            .text-info { color: #38bdf8 !important; }
+            .text-warning { color: #f59e0b !important; }
+            .text-secondary { color: #94a3b8 !important; }
+            select.form-select { background-color: #0f172a; color: #e2e8f0; border-color: #334155; }
+            h1 { color: #38bdf8; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; }
         </style>
     </head>
     <body>
@@ -114,7 +136,7 @@ def calculate_all_metrics():
                     </select>
                 </div>
                 <div class="col-md-4 text-center d-flex align-items-center justify-content-center">
-                    <div class="h4">Checkpoints: <span class="text-warning">{len(all_results)//15 if all_results else 0}</span></div>
+                    <div class="h4">Status: <span class="text-warning">Analysis Complete</span></div>
                 </div>
             </div>
         </div>
@@ -140,9 +162,9 @@ def calculate_all_metrics():
         </div>
 
         <script>
-            const rawData = {json_data};
+            const rawData = __DATA__;
 
-            function updateDashboard() {{
+            function updateDashboard() {
                 const town = document.getElementById('town-filter').value;
                 const density = document.getElementById('density-filter').value;
                 
@@ -150,68 +172,72 @@ def calculate_all_metrics():
                 if (town !== 'all') filtered = filtered.filter(d => d.town === town);
                 if (density !== 'all') filtered = filtered.filter(d => d.density === density);
 
-                const grouped = {{}};
-                filtered.forEach(d => {{
-                    if (!grouped[d.steps]) grouped[d.steps] = {{ steps: d.steps, jit: [], sp: [], stab: [] }};
+                const grouped = {};
+                filtered.forEach(d => {
+                    if (!grouped[d.steps]) grouped[d.steps] = { steps: d.steps, jit: [], sp: [], stab: [] };
                     grouped[d.steps].jit.push(d.jitter);
                     grouped[d.steps].sp.push(d.speed);
                     grouped[d.steps].stab.push(d.stability);
-                }});
+                });
 
-                const stats = Object.values(grouped).map(g => ({{
+                const stats = Object.values(grouped).map(g => ({
                     steps: g.steps,
                     jitter: g.jit.reduce((a,b) => a+b, 0) / g.jit.length,
                     speed: g.sp.reduce((a,b) => a+b, 0) / g.sp.length,
                     stability: g.stab.reduce((a,b) => a+b, 0) / g.stab.length
-                }})).sort((a,b) => a.steps - b.steps);
+                })).sort((a,b) => a.steps - b.steps);
 
                 renderPlots(stats);
                 renderTopList(stats);
-            }}
+            }
 
-            function renderPlots(data) {{
-                Plotly.newPlot('jitter-plot', [{{
+            function renderPlots(data) {
+                Plotly.newPlot('jitter-plot', [{
                     x: data.map(d => d.steps), y: data.map(d => d.jitter),
-                    type: 'scatter', mode: 'lines+markers', line: {{ color: '#ef4444', width: 2 }}
-                }}], {{
+                    type: 'scatter', mode: 'lines+markers', line: { color: '#ef4444', width: 2 }
+                }], {
                     paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
-                    font: {{ color: '#94a3b8' }},
-                    xaxis: {{ title: 'Steps', gridcolor: '#334155' }},
-                    yaxis: {{ title: 'Jitter', gridcolor: '#334155' }}
-                }});
+                    font: { color: '#94a3b8' },
+                    xaxis: { title: 'Steps', gridcolor: '#334155' },
+                    yaxis: { title: 'Jitter', gridcolor: '#334155' }
+                });
 
-                Plotly.newPlot('scatter-plot', [{{
+                Plotly.newPlot('scatter-plot', [{
                     x: data.map(d => d.speed), y: data.map(d => d.stability),
                     mode: 'markers', text: data.map(d => d.steps.toLocaleString()),
-                    marker: {{ size: 10, color: data.map(d => d.stability), colorscale: 'Portland', showscale: true }}
-                }}], {{
+                    marker: { size: 10, color: data.map(d => d.stability), colorscale: 'Portland', showscale: true }
+                }], {
                     paper_bgcolor: 'rgba(0,0,0,0)', plot_bgcolor: 'rgba(0,0,0,0)',
-                    font: {{ color: '#94a3b8' }},
-                    xaxis: {{ title: 'Speed (km/h)', gridcolor: '#334155' }},
-                    yaxis: {{ title: 'Stability Score', gridcolor: '#334155' }}
-                }});
-            }}
+                    font: { color: '#94a3b8' },
+                    xaxis: { title: 'Speed (km/h)', gridcolor: '#334155' },
+                    yaxis: { title: 'Stability Score', gridcolor: '#334155' }
+                });
+            }
 
-            function renderTopList(data) {{
+            function renderTopList(data) {
                 const sorted = [...data].sort((a,b) => b.stability - a.stability).slice(0, 10);
                 document.getElementById('top-list').innerHTML = sorted.map(d => `
                     <div class="list-group-item bg-transparent text-light border-secondary px-0 d-flex justify-content-between">
-                        <span class="text-info">${{d.steps.toLocaleString()}}</span>
-                        <span class="badge bg-dark border border-warning text-warning">${{(d.stability * 100).toFixed(1)}}% Stab</span>
+                        <span class="text-info">${d.steps.toLocaleString()}</span>
+                        <span class="badge bg-dark border border-warning text-warning">${(d.stability * 100).toFixed(1)}% Stab</span>
                     </div>
                 `).join('');
-            }}
+            }
 
             updateDashboard();
         </script>
     </body>
     </html>
     """
-    
-    with open(os.path.join(output_dir, "driving_quality_dashboard.html"), "w") as f:
-        f.write(html_template)
-    
-    print(f"✅ Dashboard generado con {len(all_results)} registros.")
+    full_html = html_template.replace("__DATA__", json.dumps(data))
+    with open(output_html, "w") as f:
+        f.write(full_html)
+    print(f"✅ Dashboard generated: {output_html}")
 
 if __name__ == "__main__":
-    calculate_all_metrics()
+    if len(sys.argv) < 3:
+        print("Usage: python3 calculate_driving_quality.py <BASE_PATH> <OUTPUT_JSON> [OUTPUT_HTML]")
+        sys.exit(1)
+    
+    html_out = sys.argv[3] if len(sys.argv) > 3 else None
+    calculate_metrics(sys.argv[1], sys.argv[2], html_out)

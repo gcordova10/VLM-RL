@@ -8,8 +8,14 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 
 # === CONFIGURACIÓN ===
-BASE_DIR = "/media/nemesis/disco4tb/Documents/VLM-RL/tensorboard"
-OUTPUT_DIR = os.path.join(BASE_DIR, "plots")
+# Rutas absolutas para mayor flexibilidad
+RUN_MAP = {
+    "/media/nemesis/disco4tb/Documents/VLM-RL/tensorboard/CLIPRewardedSAC_20250930_154046_idvlm_rl": "VLM–RL (baseline)",
+    "/media/nemesis/disco4tb/Documents_VLM-RL/investigacion/VLM-RL-PRIVATE/tensorboard/CLIPRewardedSAC_20260212_082504_idvlm_rl": "CLG–Smooth (ours)",
+}
+
+# El directorio de salida ahora es plots_ours dentro de graph_generation para mayor orden
+OUTPUT_DIR = "/media/nemesis/disco4tb/Documents/VLM-RL/graph_generation/plots_ours"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
 
 # === ESTILO GRÁFICO ===
@@ -24,12 +30,6 @@ plt.rcParams.update({
 RUN_STYLES = {
     "VLM–RL (baseline)": {"color": "black", "linestyle": "-", "linewidth": 2.0, "marker": None},
     "CLG–Smooth (ours)": {"color": "#00bcd4", "linestyle": "-", "linewidth": 2.0, "marker": None},
-}
-
-# Asocia carpetas a etiquetas legibles
-RUN_MAP = {
-    "CLIPRewardedSAC_20250930_154046_idvlm_rl": "VLM–RL (baseline)",
-    "CLIPRewardedSAC_20251027_081939_idvlm_rl": "CLG–Smooth (ours)",
 }
 
 # Métricas
@@ -49,6 +49,8 @@ YLIM_CUSTOM = {
 
 def find_tfevents_file(run_dir):
     """Busca el archivo .tfevents dentro de la carpeta del run"""
+    if not os.path.exists(run_dir):
+        return None
     for f in os.listdir(run_dir):
         if f.startswith("events.out.tfevents"):
             return os.path.join(run_dir, f)
@@ -64,14 +66,14 @@ def load_df(path, tag):
         return None
     events = ea.Scalars(tag)
     df = pd.DataFrame([(e.step, e.value) for e in events], columns=["step", "value"])
+    # Suavizado para mejor visualización
     df["smooth"] = df["value"].ewm(alpha=0.1).mean()
     return df
 
 
 def plot_metric(ax, tag, ylabel, ref_step):
     """Dibuja cada métrica con estilo limpio"""
-    for folder, label in RUN_MAP.items():
-        run_dir = os.path.join(BASE_DIR, folder)
+    for run_dir, label in RUN_MAP.items():
         tfevents_path = find_tfevents_file(run_dir)
         if not tfevents_path:
             print(f"❌ No se encontró .tfevents en {run_dir}")
@@ -91,7 +93,7 @@ def plot_metric(ax, tag, ylabel, ref_step):
             label=label,
         )
 
-        # Línea vertical de referencia
+        # Línea vertical de referencia (ej. fin de entrenamiento o checkpoint clave)
         ax.axvline(ref_step, color="gray", linestyle="--", linewidth=1)
 
     # Ejes y formato

@@ -4,9 +4,14 @@ import plotly.express as px
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 import os
+import sys
 
-def generate_html_report():
-    with open('advanced_analysis/data/advanced_metrics.json', 'r') as f:
+def generate_html_report(input_json, output_html, video_base_path):
+    if not os.path.exists(input_json):
+        print(f"Error: {input_json} not found")
+        return
+
+    with open(input_json, 'r') as f:
         data = json.load(f)
     
     df = pd.DataFrame(data)
@@ -14,23 +19,27 @@ def generate_html_report():
     # 1. Global Pareto Frontier (Efficiency vs Safety)
     # Filter only models with some success to avoid noise
     df_pareto = df[df['sr'] > 0.5].copy()
-    fig_pareto = px.scatter(
-        df_pareto, 
-        x="avg_speed", 
-        y="avg_center_dev",
-        color="sr",
-        size="rc",
-        hover_data=["steps", "scenario"],
-        title="Pareto Frontier: Velocidad vs Desviación (Modelos con SR > 0.5)",
-        labels={"avg_speed": "Velocidad Media (Eficiencia)", "avg_center_dev": "Desviación Media (Seguridad)"},
-        template="plotly_dark"
-    )
-    # We want low deviation and high speed
-    fig_pareto.update_yaxes(autorange="reversed") 
+    if not df_pareto.empty:
+        fig_pareto = px.scatter(
+            df_pareto, 
+            x="avg_speed", 
+            y="avg_center_dev",
+            color="sr",
+            size="rc",
+            hover_data=["steps", "scenario"],
+            title="Pareto Frontier: Velocidad vs Desviación (Modelos con SR > 0.5)",
+            labels={"avg_speed": "Velocidad Media (Eficiencia)", "avg_center_dev": "Desviación Media (Seguridad)"},
+            template="plotly_dark"
+        )
+        # We want low deviation and high speed
+        fig_pareto.update_yaxes(autorange="reversed") 
+    else:
+        fig_pareto = go.Figure()
 
     # 2. Stability vs Training Time
+    stability_data = df.groupby('steps')[['steer_stability', 'throttle_stability']].mean().reset_index()
     fig_stability = px.line(
-        df.groupby('steps')[['steer_stability', 'throttle_stability']].mean().reset_index(),
+        stability_data,
         x="steps",
         y=["steer_stability", "throttle_stability"],
         title="Evolución de la Estabilidad (Jerk) del Control",
@@ -51,6 +60,8 @@ def generate_html_report():
     # 4. Composite Scoring (The "Best" Model)
     # Normalize metrics to 0-1
     def normalize(series, reverse=False):
+        if series.max() == series.min():
+            return series * 0 + (1.0 if not reverse else 0.0)
         if reverse:
             return (series.max() - series) / (series.max() - series.min() + 1e-6)
         return (series - series.min()) / (series.max() - series.min() + 1e-6)
@@ -92,7 +103,7 @@ def generate_html_report():
     </head>
     <body>
         <h1>VLM-RL: Análisis Avanzado de Checkpoints</h1>
-        <p>Comparativa de 1500 ejecuciones (100 checkpoints x 15 escenarios).</p>
+        <p>Comparativa de todos los escenarios por checkpoint.</p>
         
         <div class="chart">{fig_best.to_html(full_html=False, include_plotlyjs='cdn')}</div>
         <div class="chart">{fig_pareto.to_html(full_html=False, include_plotlyjs='cdn')}</div>
@@ -108,18 +119,21 @@ def generate_html_report():
                 <th>Debilidades</th>
                 <th>Video Recomendado (Town02)</th>
             </tr>
-            {generate_dafo_rows(df)}
+            {generate_dafo_rows(df, video_base_path)}
         </table>
         <p><i>Nota: Los videos recomendados se encuentran en el directorio 'eval/' de los logs de tensorboard.</i></p>
     </body>
     </html>
     """
     
-    with open('advanced_analysis/vlmrl_advanced_dashboard.html', 'w') as f:
-        f.write(html_content)
-    print("Report generated: advanced_analysis/vlmrl_advanced_dashboard.html")
+    # Asegurar que el directorio de salida existe
+    os.makedirs(os.path.dirname(output_html) if os.path.dirname(output_html) else '.', exist_ok=True)
 
-def generate_dafo_rows(df):
+    with open(output_html, 'w') as f:
+        f.write(html_content)
+    print(f"Report generated: {output_html}")
+
+def generate_dafo_rows(df, video_base_path):
     top_steps = df.groupby('steps')['composite_score'].mean().sort_values(ascending=False).head(5).index
     rows = ""
     for step in top_steps:
@@ -143,7 +157,7 @@ def generate_dafo_rows(df):
         if stability < df['steer_stability'].mean(): strengths.append("Conducción Suave")
         else: weaknesses.append("Control Nervioso")
         
-        video_path = f"tensorboard/CLIPRewardedSAC_20250930_154046_idvlm_rl/eval/model_{step}_steps_eval.avi"
+        video_path = os.path.join(video_base_path, f"eval/model_{step}_steps_eval.avi")
         
         rows += f"""
         <tr>
@@ -157,4 +171,9 @@ def generate_dafo_rows(df):
     return rows
 
 if __name__ == "__main__":
-    generate_html_report()
+    if len(sys.argv) < 3:
+        print("Usage: python3 advanced_analysis/generate_report.py <INPUT_JSON> <OUTPUT_HTML> [VIDEO_BASE_PATH]")
+        sys.exit(1)
+    
+    video_base = sys.argv[3] if len(sys.argv) > 3 else "."
+    generate_html_report(sys.argv[1], sys.argv[2], video_base)

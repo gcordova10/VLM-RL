@@ -14,7 +14,7 @@ def clean_val(val):
         return float(matches[-1])
     return 0.0
 
-def generate_safety_report(base_path):
+def generate_safety_report(base_path, output_path):
     # Definición de mapeo detallado
     scenarios_map = {
         "eval": ("Town02", "regular"),
@@ -331,10 +331,23 @@ def generate_safety_report(base_path):
     </html>
     """
     
-    with open('safety_analysis/safety_dashboard.html', 'w') as f:
+    with open(output_path, 'w') as f:
         f.write(html_content)
-    print(f"✅ Dashboard actualizado con filtros: safety_analysis/safety_dashboard.html")
+    print(f"✅ Dashboard generado: {output_path}")
 
 if __name__ == "__main__":
-    path = "/media/nemesis/disco4tb/Documents/VLM-RL/tensorboard/CLIPRewardedSAC_20250930_154046_idvlm_rl"
-    generate_safety_report(path)
+    if len(sys.argv) < 3:
+        print("Usage: python3 safety_analysis/analyze_safety.py <BASE_PATH> <OUTPUT_FILENAME>")
+        sys.exit(1)
+        
+    base_path = sys.argv[1]
+    output_filename = sys.argv[2]
+    
+    if not output_filename.endswith('.html'):
+        output_filename += '.html'
+        
+    # Asegurar que la ruta de salida esté en safety_analysis/ si no se especifica otra cosa
+    if not os.path.dirname(output_filename):
+        output_filename = os.path.join('safety_analysis', output_filename)
+        
+    generate_safety_report(base_path, output_filename)

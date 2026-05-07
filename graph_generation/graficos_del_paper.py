@@ -8,11 +8,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 
-# === CONFIGURACIÓN ===
-BASE_DIR = "/media/nemesis/disco4tb/Documents/VLM-RL/tensorboard"
-OUTPUT_DIR = os.path.join(BASE_DIR, "plots")
-os.makedirs(OUTPUT_DIR, exist_ok=True)
-
 # === ESTILO GRÁFICO ===
 plt.rcParams.update({
     "font.family": "serif",
@@ -25,12 +20,6 @@ plt.rcParams.update({
 RUN_STYLES = {
     "VLM–RL (baseline)": {"color": "black", "linestyle": "-", "linewidth": 2.0, "marker": None},
     "CLG–Smooth (ours)": {"color": "#00bcd4", "linestyle": "-", "linewidth": 2.0, "marker": None},
-}
-
-# Asocia carpetas a etiquetas legibles
-RUN_MAP = {
-    "CLIPRewardedSAC_20250930_154046_idvlm_rl": "VLM–RL (baseline)",
-    "CLIPRewardedSAC_20251027_081939_idvlm_rl": "CLG–Smooth (ours)",
 }
 
 # Métricas
@@ -47,9 +36,13 @@ YLIM_CUSTOM = {
     "train/ent_coef": (0, 0.02),
 }
 
+RUN_MAP = {}
+OUTPUT_DIR = ""
 
 def find_tfevents_file(run_dir):
     """Busca el archivo .tfevents dentro de la carpeta del run"""
+    if not os.path.exists(run_dir):
+        return None
     for f in os.listdir(run_dir):
         if f.startswith("events.out.tfevents"):
             return os.path.join(run_dir, f)
@@ -71,8 +64,7 @@ def load_df(path, tag):
 
 def plot_metric(ax, tag, ylabel, ref_step, xlabel_size=12, ylabel_size=13, include_legend=True):
     """Dibuja cada métrica con estilo limpio"""
-    for folder, label in RUN_MAP.items():
-        run_dir = os.path.join(BASE_DIR, folder)
+    for run_dir, label in RUN_MAP.items():
         tfevents_path = find_tfevents_file(run_dir)
         if not tfevents_path:
             print(f"❌ No se encontró .tfevents en {run_dir}")
@@ -151,10 +143,10 @@ def main():
                         default="/media/nemesis/disco4tb/Documents/VLM-RL/tensorboard/CLIPRewardedSAC_20250930_154046_idvlm_rl",
                         help="Ruta absoluta del primer run (baseline)")
     parser.add_argument("--path2", type=str,
-                        default="/media/nemesis/disco4tb/Documents_VLM-RL/investigacion/VLM-RL-PRIVATE/tensorboard/CLIPRewardedSAC_20251027_081939_idvlm_rl",
+                        default="/media/nemesis/disco4tb/Documents_VLM-RL/investigacion/VLM-RL-PRIVATE/tensorboard/CLIPRewardedSAC_20260212_082504_idvlm_rl",
                         help="Ruta absoluta del segundo run (ours)")
     parser.add_argument("--out-dir", type=str,
-                        default="/media/nemesis/disco4tb/Documents/VLM-RL/graph_generation/plots",
+                        default="/media/nemesis/disco4tb/Documents/VLM-RL/graph_generation/plots_ours",
                         help="Directorio de salida para los gráficos")
     args = parser.parse_args()
 

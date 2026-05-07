@@ -152,5 +152,4 @@ html_template = """
 with open("/media/nemesis/disco4tb/Documents/VLM-RL/tensorboard_analysis/detailed_100_comparison.html", "w") as f:
     f.write(html_template)
 print("✅ Reporte completo de 100 Checkpoints (19 métricas) generado.")
-EOF
-python3 scripts/generate_100_step_comparison.py
+

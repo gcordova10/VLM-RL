@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import json
 import re
+import sys
 
 def extract_step(filename):
     match = re.search(r'model_(\d+)_steps', filename)
@@ -9,7 +10,20 @@ def extract_step(filename):
         return int(match.group(1))
     return None
 
-base_path = '/media/nemesis/disco4tb/Documents/VLM-RL/tensorboard/CLIPRewardedSAC_20250930_154046_idvlm_rl'
+if len(sys.argv) < 3:
+    print("Usage: python3 advanced_analysis/extract_data.py <BASE_PATH> <OUTPUT_FILENAME>")
+    sys.exit(1)
+
+base_path = sys.argv[1]
+output_filename = sys.argv[2]
+
+if not output_filename.endswith('.html'):
+    output_filename += '.html'
+
+# Asegurar que la ruta de salida esté en advanced_analysis/ si no se especifica otra cosa
+if not os.path.dirname(output_filename):
+    output_filename = os.path.join('advanced_analysis', output_filename)
+
 eval_dirs = [d for d in os.listdir(base_path) if os.path.isdir(os.path.join(base_path, d)) and d.startswith('eval')]
 
 data = {}
@@ -250,7 +264,7 @@ html_template = """
 
 final_html = html_template.replace("REPLACE_ME_DATA", json_data_str)
 
-with open('advanced_analysis/heatmap.html', 'w') as f:
+with open(output_filename, 'w') as f:
     f.write(final_html)
 
-print("Dashboard generated successfully: advanced_analysis/heatmap.html")
+print(f"Dashboard generated successfully: {output_filename}")

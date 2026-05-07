@@ -3,9 +3,27 @@ import pandas as pd
 from tensorboard.backend.event_processing import event_accumulator
 import json
 import numpy as np
+import sys
+import glob
+
+def find_tfevents(path):
+    if os.path.isfile(path):
+        return path
+    # Buscar el archivo de eventos en la carpeta (recursivo)
+    files = glob.glob(os.path.join(path, "events.out.tfevents.*"), recursive=True)
+    if not files:
+        # Intentar buscar en subcarpetas comunes de TB
+        files = glob.glob(os.path.join(path, "**", "events.out.tfevents.*"), recursive=True)
+    
+    if files:
+        # Devolver el más reciente o el primero encontrado
+        return files[0]
+    return path
 
 def extract_tb(path):
-    ea = event_accumulator.EventAccumulator(path, size_guidance={event_accumulator.SCALARS: 0})
+    event_path = find_tfevents(path)
+    print(f"Leyendo eventos de: {event_path}")
+    ea = event_accumulator.EventAccumulator(event_path, size_guidance={event_accumulator.SCALARS: 0})
     ea.Reload()
     data = {}
     for tag in ea.Tags()['scalars']:
@@ -13,8 +31,21 @@ def extract_tb(path):
         data[tag] = pd.DataFrame([{'step': e.step, 'val': e.value} for e in scalars]).groupby('step')['val'].mean()
     return pd.DataFrame(data)
 
-path_base = "/media/nemesis/disco4tb/Documents/VLM-RL/tensorboard/CLIPRewardedSAC_20250930_154046_idvlm_rl/events.out.tfevents.1759239646.nemesis.48840.0"
-path_ours = "/media/nemesis/disco4tb/Documents_VLM-RL/investigacion/VLM-RL-PRIVATE/tensorboard/CLIPRewardedSAC_20260212_082504_idvlm_rl/events.out.tfevents.1770881104.nemesis.3270074.0"
+if len(sys.argv) < 4:
+    print("Usage: python3 scripts/generate_elite_audit.py <PATH_BASE> <PATH_OURS> <OUTPUT_NAME>")
+    print("Example: python3 scripts/generate_elite_audit.py ./tensorboard/old_run ./tensorboard/new_run elite_finder_20260212.html")
+    sys.exit(1)
+
+path_base = sys.argv[1]
+path_ours = sys.argv[2]
+output_name = sys.argv[3]
+
+if not output_name.endswith('.html'):
+    output_name += '.html'
+
+# Asegurar que se guarde en tensorboard_analysis/ si no hay ruta
+if not os.path.dirname(output_name):
+    output_name = os.path.join('tensorboard_analysis', output_name)
 
 print("Extrayendo binarios...")
 df_base = extract_tb(path_base).sort_index().ffill().bfill()
@@ -179,6 +210,6 @@ html_template = """
 </html>
 """
 
-with open("/media/nemesis/disco4tb/Documents/VLM-RL/tensorboard_analysis/elite_finder.html", "w") as f:
+with open(output_name, "w") as f:
     f.write(html_template)
-print("✅ Buscador Elite Definitivo generado en tensorboard_analysis/elite_finder.html")
+print(f"✅ Buscador Elite Definitivo generado en {output_name}")

@@ -167,7 +167,9 @@ def analyze_all_scenarios(run_dir):
         print("-" * 60)
 
 if __name__ == "__main__":
-    default_path = "/media/nemesis/disco4tb/Documents_VLM-RL/investigacion/VLM-RL-PRIVATE/tensorboard/CLIPRewardedSAC_20251027_081939_idvlm_rl"
+    #default_path = "/media/nemesis/disco4tb/Documents_VLM-RL/investigacion/VLM-RL-PRIVATE/tensorboard/CLIPRewardedSAC_20251027_081939_idvlm_rl"
+    default_path = "/media/nemesis/disco4tb/Documents_VLM-RL/investigacion/VLM-RL-PRIVATE/tensorboard/CLIPRewardedSAC_20260212_082504_idvlm_rl"
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--run_dir", type=str, default=default_path)
     args = parser.parse_args()

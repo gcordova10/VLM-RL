@@ -137,8 +137,9 @@ def analyze_models(run_dir):
 
 if __name__ == "__main__":
     # Default path if not provided
-    default_path = "/media/nemesis/disco4tb/Documents/VLM-RL/tensorboard/CLIPRewardedSAC_20251027_081939_idvlm_rl"
-    
+    #default_path = "/media/nemesis/disco4tb/Documents/VLM-RL/tensorboard/CLIPRewardedSAC_20251027_081939_idvlm_rl"
+    default_path = "/media/nemesis/disco4tb/Documents_VLM-RL/investigacion/VLM-RL-PRIVATE/tensorboard/CLIPRewardedSAC_20260212_082504_idvlm_rl"
+
     parser = argparse.ArgumentParser(description="Find the best RL model based on stability and success.")
     parser.add_argument("--run_dir", type=str, default=default_path, help="Path to the tensorboard run directory")
     

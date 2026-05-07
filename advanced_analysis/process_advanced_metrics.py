@@ -4,11 +4,9 @@ import glob
 import numpy as np
 import json
 import re
+import sys
 
-def process_all_eval_folders():
-    base_path = '/media/nemesis/disco4tb/Documents/VLM-RL/tensorboard/CLIPRewardedSAC_20250930_154046_idvlm_rl'
-    output_dir = '/media/nemesis/disco4tb/Documents/VLM-RL/advanced_analysis/data'
-    
+def process_all_eval_folders(base_path, output_file):
     # Identificar carpetas de evaluación
     eval_folders = [d for d in os.listdir(base_path) if d.startswith('eval') and os.path.isdir(os.path.join(base_path, d))]
     
@@ -23,6 +21,7 @@ def process_all_eval_folders():
         town = "General"
         traffic = "Normal"
         if "Town01" in folder: town = "Town01"
+        elif "Town02" in folder: town = "Town02"
         elif "Town03" in folder: town = "Town03"
         elif "Town04" in folder: town = "Town04"
         elif "Town05" in folder: town = "Town05"
@@ -41,6 +40,11 @@ def process_all_eval_folders():
 
                 # Leer CSV
                 df = pd.read_csv(f, on_bad_lines='skip')
+                
+                # Check if 'steer' and 'speed' columns exist
+                if 'steer' not in df.columns or 'speed' not in df.columns:
+                    continue
+
                 df_clean = df[pd.to_numeric(df['steer'], errors='coerce').notnull()].copy()
                 
                 if df_clean.empty: continue
@@ -51,9 +55,6 @@ def process_all_eval_folders():
                 # Calcular métricas
                 steer_jitter = df_clean.groupby('episode')['steer'].std().mean()
                 avg_speed = df_clean['speed'].mean()
-                
-                # Éxito (desde el summary correspondiente si es posible, o aproximado)
-                # Por simplicidad aquí nos enfocamos en calidad
                 
                 all_data.append({
                     'steps': steps,
@@ -66,12 +67,18 @@ def process_all_eval_folders():
             except:
                 continue
 
+    # Asegurar que el directorio de salida existe
+    os.makedirs(os.path.dirname(output_file), exist_ok=True)
+    
     # Guardar resultados
-    output_file = os.path.join(output_dir, 'advanced_metrics.json')
     with open(output_file, 'w') as f:
         json.dump(all_data, f, indent=4)
     
     print(f"Proceso finalizado. {len(all_data)} registros guardados en {output_file}")
 
 if __name__ == "__main__":
-    process_all_eval_folders()
+    if len(sys.argv) < 3:
+        print("Usage: python3 advanced_analysis/process_advanced_metrics.py <BASE_PATH> <OUTPUT_JSON>")
+        sys.exit(1)
+        
+    process_all_eval_folders(sys.argv[1], sys.argv[2])
