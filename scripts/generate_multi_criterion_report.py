@@ -149,8 +149,8 @@ def create_radar_plot(base_path, output_path):
 
 if __name__ == "__main__":
     #path = sys.argv[1] if len(sys.argv) > 1 else '/media/nemesis/disco4tb/Documents/VLM-RL/tensorboard/CLIPRewardedSAC_20250930_154046_idvlm_rl'
-    #out = sys.argv[2] if len(sys.argv) > 2 else 'tensorboard_analysis/vlmrl_multi_criterion_radar_dynamic.html'
+    #out = sys.argv[2] if len(sys.argv) > 2 else 'tensorboard_analysis/vlmrl_multi_criterion_radar_dynamic_20250930.html'
     path = sys.argv[1] if len(sys.argv) > 1 else '/media/nemesis/disco4tb/Documents_VLM-RL/investigacion/VLM-RL-PRIVATE/tensorboard/CLIPRewardedSAC_20260212_082504_idvlm_rl'
-    out = sys.argv[2] if len(sys.argv) > 2 else 'tensorboard_analysis/vlmrl_multi_criterion_radar_dynamic_ours.html'
+    out = sys.argv[2] if len(sys.argv) > 2 else 'tensorboard_analysis/vlmrl_multi_criterion_radar_dynamic_20260212_ours.html'
     
     create_radar_plot(path, out)
